@@ -163,21 +163,21 @@ input {
 
 const data = {
 "Dienas zupa":[
- {name:"Tomātu zupa", price:4, desc:"Ar baziliku"}
+ {name:"Tomātu zupa", price:4, desc:"Ar baziliku" img:"https://ik.imagekit.io/erewhile/Grill%20Bar/IMG_0335.JPG"}
 ],
 "Gaļas ēdieni":[
- {name:"Cūkgaļas šašliks", price:10, desc:"Ar piedevām"},
- {name:"Vistas šašliks", price:9, desc:"Maigs un sulīgs"}
+ {name:"Cūkgaļas šašliks", price:10, desc:"Ar piedevām" img:"https://ik.imagekit.io/erewhile/Grill%20Bar/IMG_0332.JPG"},
+ {name:"Vistas šašliks", price:9, desc:"Maigs un sulīgs" img:"https://ik.imagekit.io/erewhile/Grill%20Bar/Screenshot%20at%20Apr%2016%2014-21-35.png"}
 ],
 "Salāti":[
- {name:"Cēzara salāti", price:7, desc:"Ar vistu"}
+ {name:"Cēzara salāti", price:7, desc:"Ar vistu" img:"https://ik.imagekit.io/erewhile/Grill%20Bar/Screenshot%20at%20Apr%2016%2014-20-32.png"}
 ],
 "Uzkodas":[
- {name:"Frī kartupeļi", price:4, desc:"Kraukšķīgi"},
+ {name:"Frī kartupeļi", price:4, desc:"Kraukšķīgi" img:"https://ik.imagekit.io/erewhile/Grill%20Bar/IMG_0336.JPG" },
  {name:"Grilēti dārzeņi", price:5, desc:"Sezonas"}
 ],
 "Mērces":[
- {name:"Ķiploku mērce", price:1, desc:"Krēmīga"},
+ {name:"Ķiploku mērce", price:1, desc:"Krēmīga" img:"https://ik.imagekit.io/erewhile/Grill%20Bar/Screenshot%20at%20Apr%2016%2014-21-07.png" },
  {name:"BBQ mērce", price:1, desc:"Saldena"}
 ],
 "Dzērieni":[
@@ -204,7 +204,7 @@ function render(){
             let card=document.createElement("div");
             card.className="card";
             card.innerHTML=`
-                <img src="https://via.placeholder.com/150">
+                <img src="${item.img}">
                 <div>
                     <h4>${item.name}</h4>
                     <p>${item.desc}</p>
