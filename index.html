@@ -1,330 +1,1121 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="lv">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Ēdienkarte</title>
-
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
+:root {
+  --bg: #F2F2F7;
+  --surface: rgba(255,255,255,0.85);
+  --surface-solid: #FFFFFF;
+  --text: #1C1C1E;
+  --text-secondary: #6C6C70;
+  --accent: #FF3B30;
+  --accent-soft: rgba(255,59,48,0.1);
+  --border: rgba(0,0,0,0.06);
+  --shadow: 0 2px 20px rgba(0,0,0,0.08);
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.06);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --font: -apple-system, 'SF Pro Display', BlinkMacSystemFont, sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html { font-size: 16px; }
+
 body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-    background: linear-gradient(180deg, #f8f9fb, #eef1f5);
-    color: #111;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overscroll-behavior: none;
 }
 
-
-/* HEADER */
-header {
-    position: sticky;
-    top: 0;
-    backdrop-filter: blur(12px);
-    background: rgba(255,255,255,0.7);
-    padding: 15px;
-    text-align: center;
-    font-weight: 600;
+/* ─── HEADER ─── */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  background: rgba(242,242,247,0.82);
+  border-bottom: 0.5px solid var(--border);
+  padding: 12px 16px 8px;
 }
 
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
 
-/* CATEGORY BLOCK */
+.header h1 {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+}
+
+.header-badge {
+  background: var(--accent);
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: transform 0.15s, opacity 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.header-badge:active { transform: scale(0.94); opacity: 0.85; }
+
+.header-badge .cart-count {
+  background: rgba(255,255,255,0.3);
+  border-radius: 10px;
+  padding: 0 5px;
+  font-size: 11px;
+  min-width: 18px;
+  text-align: center;
+}
+
+/* ─── CATEGORY PILLS ─── */
+.cat-scroll {
+  display: flex;
+  gap: 7px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 2px 0;
+  scroll-snap-type: x mandatory;
+}
+
+.cat-scroll::-webkit-scrollbar { display: none; }
+
+.cat-pill {
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 13px;
+  border-radius: 20px;
+  background: rgba(0,0,0,0.06);
+  color: var(--text-secondary);
+  cursor: pointer;
+  scroll-snap-align: start;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+
+.cat-pill.active {
+  background: var(--text);
+  color: white;
+}
+
+/* ─── CONTENT ─── */
+.content {
+  padding: 16px;
+  padding-bottom: 100px;
+}
+
+/* ─── SECTION ─── */
 .section {
-    padding: 20px 15px;
+  margin-bottom: 28px;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 0.45s ease forwards;
 }
 
+.section:nth-child(1) { animation-delay: 0.05s; }
+.section:nth-child(2) { animation-delay: 0.1s; }
+.section:nth-child(3) { animation-delay: 0.15s; }
+.section:nth-child(4) { animation-delay: 0.2s; }
+.section:nth-child(5) { animation-delay: 0.25s; }
+.section:nth-child(6) { animation-delay: 0.3s; }
 
-.section h2 {
-    margin-bottom: 15px;
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
 }
 
+.section-title {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  margin-bottom: 10px;
+  padding-left: 2px;
+}
 
-/* CARDS */
+/* ─── CARDS ─── */
 .card {
-    background: rgba(255,255,255,0.6);
-    backdrop-filter: blur(14px);
-    border-radius: 20px;
-    padding: 12px;
-    margin-bottom: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-    display: flex;
-    gap: 12px;
-    cursor: pointer;
+  background: var(--surface);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: var(--radius);
+  margin-bottom: 10px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  cursor: pointer;
+  transition: transform 0.18s, box-shadow 0.18s;
+  border: 0.5px solid rgba(255,255,255,0.8);
+  overflow: hidden;
+  position: relative;
 }
 
-
-.card img {
-    width: 90px;
-    height: 90px;
-    border-radius: 14px;
-    object-fit: cover;
+.card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0);
+  transition: background 0.15s;
+  border-radius: var(--radius);
 }
 
+.card:active { transform: scale(0.975); box-shadow: 0 1px 6px rgba(0,0,0,0.08); }
+.card:active::after { background: rgba(0,0,0,0.03); }
 
-.card h4 {
-    margin: 0;
+.card-img {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--bg);
 }
 
-
-.card p {
-    margin: 5px 0;
-    color: #666;
-    font-size: 14px;
+.card-img-placeholder {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, #F0F0F5 0%, #E0E0E8 100%);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
 }
 
+.card-body { flex: 1; min-width: 0; }
 
-/* CART BAR */
-.cart {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-    background: rgba(255,255,255,0.8);
-    backdrop-filter: blur(20px);
-    border-radius: 20px;
-    padding: 15px;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+.card-name {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-
-/* MODAL */
-.modal {
-    position: fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background: rgba(0,0,0,0.3);
-    display:none;
-    justify-content:center;
-    align-items:flex-end;
+.card-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
 }
 
-
-.modal-content {
-    width:100%;
-    background:white;
-    border-radius:20px 20px 0 0;
-    padding:20px;
-    animation: slideUp 0.3s ease;
+.card-price {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
 }
 
-
-@keyframes slideUp {
-    from {transform: translateY(100%);}
-    to {transform: translateY(0);}
+.card-add {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: white;
+  font-size: 20px;
+  font-weight: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.15s;
+  line-height: 1;
+  padding-bottom: 1px;
 }
 
+.card:active .card-add { transform: scale(0.88); }
 
-button {
-    background: #111;
-    color: white;
-    border: none;
-    padding: 14px;
-    border-radius: 12px;
-    width: 100%;
-    margin-top: 10px;
+/* ─── BOTTOM CART BAR ─── */
+.cart-bar {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 32px);
+  max-width: 430px;
+  background: var(--text);
+  color: white;
+  border-radius: 16px;
+  padding: 0 16px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s;
+  z-index: 200;
+  opacity: 0;
+  transform: translateX(-50%) translateY(80px);
 }
 
-
-input {
-    width: 100%;
-    padding: 12px;
-    margin-top: 10px;
-    border-radius: 10px;
-    border: 1px solid #ddd;
+.cart-bar.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
+.cart-bar:active { transform: translateX(-50%) scale(0.97); }
 
+.cart-bar-left {
+  background: rgba(255,255,255,0.15);
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-size: 13px;
+  font-weight: 600;
+  min-width: 26px;
+  text-align: center;
+}
+
+.cart-bar-mid {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.cart-bar-right {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* ─── MODAL ─── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0);
+  z-index: 300;
+  display: none;
+  transition: background 0.3s;
+}
+
+.modal-overlay.open {
+  background: rgba(0,0,0,0.4);
+}
+
+.modal-sheet {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--surface-solid);
+  border-radius: 24px 24px 0 0;
+  padding: 0 0 env(safe-area-inset-bottom, 20px);
+  max-height: 90vh;
+  overflow-y: auto;
+  transform: translateY(100%);
+  transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.modal-sheet.open {
+  transform: translateY(0);
+}
+
+.modal-handle {
+  width: 36px;
+  height: 5px;
+  background: #E0E0E0;
+  border-radius: 3px;
+  margin: 10px auto 0;
+}
+
+.modal-body { padding: 16px 20px 20px; }
+
+/* Item modal */
+.item-modal-img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  background: var(--bg);
+}
+
+.item-modal-img-placeholder {
+  width: 100%;
+  height: 160px;
+  background: linear-gradient(135deg, #F0F0F5, #E0E0E8);
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 60px;
+}
+
+.item-modal-name {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 4px;
+}
+
+.item-modal-desc {
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+.qty-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.qty-label { font-size: 15px; font-weight: 500; }
+
+.qty-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg);
+  border-radius: 12px;
+  padding: 4px;
+}
+
+.qty-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: white;
+  border: none;
+  font-size: 18px;
+  font-weight: 400;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: transform 0.12s;
+  color: var(--text);
+  width: auto;
+  padding: 0 12px;
+}
+
+.qty-btn:active { transform: scale(0.9); }
+
+.qty-num {
+  font-size: 16px;
+  font-weight: 600;
+  min-width: 24px;
+  text-align: center;
+}
+
+/* Buttons */
+.btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  padding: 0 16px;
+  height: 52px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: transform 0.15s, opacity 0.15s;
+  letter-spacing: -0.2px;
+}
+
+.btn-primary:active { transform: scale(0.97); opacity: 0.88; }
+
+.btn-secondary {
+  display: block;
+  width: 100%;
+  background: var(--bg);
+  color: var(--text);
+  border: none;
+  border-radius: 14px;
+  padding: 0 16px;
+  height: 48px;
+  font-size: 15px;
+  font-weight: 500;
+  font-family: var(--font);
+  cursor: pointer;
+  margin-top: 8px;
+  transition: opacity 0.15s;
+  letter-spacing: -0.2px;
+}
+
+.btn-secondary:active { opacity: 0.6; }
+
+.btn-dark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  background: #1C1C1E;
+  color: white;
+  border: none;
+  border-radius: 14px;
+  padding: 0 16px;
+  height: 52px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: var(--font);
+  cursor: pointer;
+  margin-bottom: 8px;
+  transition: transform 0.15s;
+}
+
+.btn-dark:active { transform: scale(0.97); }
+
+/* Cart modal */
+.cart-item-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 0.5px solid var(--border);
+}
+
+.cart-item-img {
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: var(--bg);
+  flex-shrink: 0;
+}
+
+.cart-item-img-placeholder {
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  background: var(--bg);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+.cart-item-info { flex: 1; }
+.cart-item-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+.cart-item-price { font-size: 13px; color: var(--text-secondary); }
+
+.cart-item-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg);
+  border-radius: 10px;
+  padding: 3px;
+}
+
+.cart-ctrl-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: white;
+  border: none;
+  font-size: 16px;
+  font-family: var(--font);
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s;
+  color: var(--text);
+}
+
+.cart-ctrl-btn:active { transform: scale(0.85); }
+.cart-ctrl-num { font-size: 14px; font-weight: 600; min-width: 16px; text-align: center; }
+
+.total-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0 4px;
+}
+
+.total-label { font-size: 16px; font-weight: 500; color: var(--text-secondary); }
+.total-amount { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+
+/* Payment */
+.pay-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.pay-btn {
+  height: 58px;
+  border: none;
+  border-radius: 14px;
+  background: var(--bg);
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: transform 0.15s, background 0.15s;
+  color: var(--text);
+}
+
+.pay-btn:active { transform: scale(0.95); background: #E5E5EA; }
+
+.pay-btn .pay-icon { font-size: 22px; }
+
+.pay-btn.apple { background: #1C1C1E; color: white; }
+.pay-btn.google { background: white; border: 0.5px solid rgba(0,0,0,0.1); }
+
+.input-field {
+  width: 100%;
+  padding: 0 14px;
+  height: 48px;
+  background: var(--bg);
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-family: var(--font);
+  color: var(--text);
+  margin-bottom: 10px;
+  outline: none;
+  transition: box-shadow 0.2s;
+}
+
+.input-field:focus { box-shadow: 0 0 0 3px rgba(255,59,48,0.15); }
+.input-field::placeholder { color: #AEAEB2; }
+
+/* QR */
+.qr-container {
+  text-align: center;
+  padding: 10px 0;
+}
+
+.qr-container img {
+  width: 180px;
+  height: 180px;
+  border-radius: 16px;
+  margin: 16px auto;
+  display: block;
+  box-shadow: var(--shadow-card);
+}
+
+.qr-label {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-top: 6px;
+}
+
+/* Modal title */
+.modal-title {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  margin-bottom: 4px;
+}
+
+.modal-subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+/* Divider */
+.divider { height: 0.5px; background: var(--border); margin: 4px 0 16px; }
+
+/* Bounce anim for cart add */
+@keyframes cartBounce {
+  0% { transform: translateX(-50%) translateY(0) scale(1); }
+  40% { transform: translateX(-50%) translateY(-6px) scale(1.04); }
+  70% { transform: translateX(-50%) translateY(2px) scale(0.98); }
+  100% { transform: translateX(-50%) translateY(0) scale(1); }
+}
+
+.cart-bar.bounce { animation: cartBounce 0.35s ease; }
+
+/* Section hidden */
+.section.hidden { display: none; }
+
+/* Success */
+.success-icon {
+  width: 72px;
+  height: 72px;
+  background: #34C759;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  margin: 20px auto;
+}
+
+.success-title {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 6px;
+}
+
+.success-sub {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 15px;
+  margin-bottom: 24px;
+}
+
+/* Empty cart */
+.empty-cart {
+  text-align: center;
+  padding: 30px 0 10px;
+  color: var(--text-secondary);
+  font-size: 15px;
+}
+
+.empty-cart .icon { font-size: 44px; margin-bottom: 10px; }
 </style>
 </head>
 
-
 <body>
 
-
-<header>Ēdienkarte</header>
-
-
-<div id="content"></div>
-
-
-<div class="cart" onclick="openCart()">Grozs (0)</div>
-
-
-<div class="modal" id="modal">
-  <div class="modal-content" id="modalContent"></div>
+<div class="header">
+  <div class="header-top">
+    <h1>Ēdienkarte</h1>
+    <div class="header-badge" id="headerCart" onclick="openCartModal()" style="display:none">
+      🛒 Grozs <span class="cart-count" id="headerCartCount">0</span>
+    </div>
+  </div>
+  <div class="cat-scroll" id="catPills"></div>
 </div>
 
+<div class="content" id="content"></div>
+
+<div class="cart-bar" id="cartBar" onclick="openCartModal()">
+  <span class="cart-bar-left" id="cartBarCount">0</span>
+  <span class="cart-bar-mid">Skatīt grozu</span>
+  <span class="cart-bar-right" id="cartBarTotal">0.00 €</span>
+</div>
+
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+  <div class="modal-sheet" id="modalSheet">
+    <div class="modal-handle"></div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
 
 <script>
 
+// ── DATA ──────────────────────────────────────────────────────────────────────
+const EMOJI = {"Dienas zupa":"🍲","Gaļas ēdieni":"🥩","Salāti":"🥗","Uzkodas":"🍟","Mērces":"🫙","Dzērieni":"🥤"};
 
 const data = {
-"Dienas zupa":[
- {name:"Tomātu zupa", price:4, desc:"Ar baziliku" img:"https://ik.imagekit.io/erewhile/Grill%20Bar/IMG_0335.JPG"}
-],
-"Gaļas ēdieni":[
- {name:"Cūkgaļas šašliks", price:10, desc:"Ar piedevām" img:"https://ik.imagekit.io/erewhile/Grill%20Bar/IMG_0332.JPG"},
- {name:"Vistas šašliks", price:9, desc:"Maigs un sulīgs" img:"https://ik.imagekit.io/erewhile/Grill%20Bar/Screenshot%20at%20Apr%2016%2014-21-35.png"}
-],
-"Salāti":[
- {name:"Cēzara salāti", price:7, desc:"Ar vistu" img:"https://ik.imagekit.io/erewhile/Grill%20Bar/Screenshot%20at%20Apr%2016%2014-20-32.png"}
-],
-"Uzkodas":[
- {name:"Frī kartupeļi", price:4, desc:"Kraukšķīgi" img:"https://ik.imagekit.io/erewhile/Grill%20Bar/IMG_0336.JPG" },
- {name:"Grilēti dārzeņi", price:5, desc:"Sezonas"}
-],
-"Mērces":[
- {name:"Ķiploku mērce", price:1, desc:"Krēmīga" img:"https://ik.imagekit.io/erewhile/Grill%20Bar/Screenshot%20at%20Apr%2016%2014-21-07.png" },
- {name:"BBQ mērce", price:1, desc:"Saldena"}
-],
-"Dzērieni":[
- {name:"Kola", price:2, desc:"Auksta"},
- {name:"Ūdens", price:1, desc:"Negāzēts"}
-]
+  "Dienas zupa": [
+    { name:"Tomātu zupa", price:4, desc:"Ar baziliku", img:"https://ik.imagekit.io/erewhile/Grill%20Bar/IMG_0335.JPG" }
+  ],
+  "Gaļas ēdieni": [
+    { name:"Cūkgaļas šašliks", price:10, desc:"Ar piedevām", img:"https://ik.imagekit.io/erewhile/Grill%20Bar/IMG_0332.JPG" },
+    { name:"Vistas šašliks", price:9, desc:"Maigs un sulīgs", img:"https://ik.imagekit.io/erewhile/Grill%20Bar/Screenshot%20at%20Apr%2016%2014-21-35.png" }
+  ],
+  "Salāti": [
+    { name:"Cēzara salāti", price:7, desc:"Ar vistu", img:"https://ik.imagekit.io/erewhile/Grill%20Bar/Screenshot%20at%20Apr%2016%2014-20-32.png" }
+  ],
+  "Uzkodas": [
+    { name:"Frī kartupeļi", price:4, desc:"Kraukšķīgi", img:"https://ik.imagekit.io/erewhile/Grill%20Bar/IMG_0336.JPG" },
+    { name:"Grilēti dārzeņi", price:5, desc:"Sezonas dārzeņi" }
+  ],
+  "Mērces": [
+    { name:"Ķiploku mērce", price:1, desc:"Krēmīga", img:"https://ik.imagekit.io/erewhile/Grill%20Bar/Screenshot%20at%20Apr%2016%2014-21-07.png" },
+    { name:"BBQ mērce", price:1, desc:"Saldena" }
+  ],
+  "Dzērieni": [
+    { name:"Kola", price:2, desc:"Auksta" },
+    { name:"Ūdens", price:1, desc:"Negāzēts" }
+  ]
 };
 
+let cart = [];
+let currentItem = null;
+let currentQty = 1;
+let modalMode = null; // 'item' | 'cart' | 'payment' | 'cash'
 
-let cart=[];
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function render() {
+  const content = document.getElementById("content");
+  const pills = document.getElementById("catPills");
 
+  Object.keys(data).forEach((cat, ci) => {
+    // pill
+    const pill = document.createElement("div");
+    pill.className = "cat-pill" + (ci === 0 ? " active" : "");
+    pill.textContent = EMOJI[cat] + " " + cat;
+    pill.dataset.cat = cat;
+    pill.onclick = () => scrollToSection(cat, pill);
+    pills.appendChild(pill);
 
-const content=document.getElementById("content");
+    // section
+    const sec = document.createElement("div");
+    sec.className = "section";
+    sec.id = "sec-" + cat;
 
+    const title = document.createElement("div");
+    title.className = "section-title";
+    title.textContent = cat;
+    sec.appendChild(title);
 
-function render(){
-    Object.keys(data).forEach(cat=>{
-        let section=document.createElement("div");
-        section.className="section";
-        section.innerHTML=`<h2>${cat}</h2>`;
-
-
-        data[cat].forEach(item=>{
-            let card=document.createElement("div");
-            card.className="card";
-            card.innerHTML=`
-                <img src="${item.img}">
-                <div>
-                    <h4>${item.name}</h4>
-                    <p>${item.desc}</p>
-                    <b>${item.price} €</b>
-                </div>
-            `;
-            card.onclick=()=>openItem(item);
-            section.appendChild(card);
-        });
-
-
-        content.appendChild(section);
-    });
-}
-
-
-function openItem(item){
-    const modal=document.getElementById("modal");
-    const content=document.getElementById("modalContent");
-
-
-    content.innerHTML=`
-        <h2>${item.name}</h2>
-        <p>${item.desc}</p>
-        <p><b>Cena:</b> ${item.price} €</p>
-        <input type="number" id="qty" value="1" min="1">
-        <button onclick='add(${JSON.stringify(item)})'>Pievienot grozam</button>
-        <button onclick="closeModal()">Aizvērt</button>
-    `;
-    modal.style.display="flex";
-}
-
-
-function closeModal(){
-    document.getElementById("modal").style.display="none";
-}
-
-
-function add(item){
-    let qty=document.getElementById("qty").value;
-    cart.push({...item, qty});
-    updateCart();
-    closeModal();
-}
-
-
-function updateCart(){
-    document.querySelector(".cart").innerText="Grozs ("+cart.length+")";
-}
-
-
-function openCart(){
-    let modal=document.getElementById("modal");
-    let content=document.getElementById("modalContent");
-
-
-    let total=0;
-    let html="<h2>Grozs</h2>";
-
-
-    cart.forEach(i=>{
-        total+=i.price*i.qty;
-        html+=`<p>${i.name} x${i.qty}</p>`;
+    data[cat].forEach(item => {
+      sec.appendChild(makeCard(item));
     });
 
+    content.appendChild(sec);
+  });
 
-    html+=`<h3>Kopā: ${total} €</h3>`;
-
-
-    html+=`
-        <button onclick="payment()">Turpināt</button>
-        <button onclick="closeModal()">Aizvērt</button>
-    `;
-
-
-    content.innerHTML=html;
-    modal.style.display="flex";
+  // scroll spy
+  window.addEventListener("scroll", updateActivePill, { passive: true });
 }
 
+function makeCard(item) {
+  const card = document.createElement("div");
+  card.className = "card";
+  card.onclick = () => openItemModal(item);
 
-function payment(){
-    let content=document.getElementById("modalContent");
+  const imgEl = item.img
+    ? `<img class="card-img" src="${item.img}" alt="${item.name}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+    : '';
+  const placeholder = `<div class="card-img-placeholder" style="${item.img ? 'display:none' : ''}">${EMOJI[getCatOf(item)] || '🍽'}</div>`;
 
-
-    content.innerHTML=`
-        <h2>Apmaksa</h2>
-
-
-        <button>Apple Pay</button>
-        <button>Google Pay</button>
-        <button>Karte</button>
-        <button onclick="cash()">Skaidrā naudā</button>
-
-
-        <input placeholder="E-pasts">
-        <input placeholder="Tālrunis">
-
-
-        <button onclick="closeModal()">Apstiprināt</button>
-    `;
+  card.innerHTML = `
+    ${imgEl}${placeholder}
+    <div class="card-body">
+      <div class="card-name">${item.name}</div>
+      <div class="card-desc">${item.desc}</div>
+      <div class="card-price">${item.price.toFixed(2)} €</div>
+    </div>
+    <div class="card-add">+</div>
+  `;
+  return card;
 }
 
-
-function cash(){
-    let content=document.getElementById("modalContent");
-
-
-    content.innerHTML=`
-        <h2>Parādiet QR kodu kasē</h2>
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=order123">
-        <button onclick="closeModal()">Aizvērt</button>
-    `;
+function getCatOf(item) {
+  return Object.keys(data).find(cat => data[cat].includes(item));
 }
 
+// ── SCROLL SPY ────────────────────────────────────────────────────────────────
+function scrollToSection(cat, pill) {
+  const sec = document.getElementById("sec-" + cat);
+  if (!sec) return;
+  const top = sec.getBoundingClientRect().top + window.scrollY - 90;
+  window.scrollTo({ top, behavior: "smooth" });
+
+  document.querySelectorAll(".cat-pill").forEach(p => p.classList.remove("active"));
+  pill.classList.add("active");
+  pill.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+}
+
+function updateActivePill() {
+  const sections = Object.keys(data).map(cat => ({
+    cat,
+    el: document.getElementById("sec-" + cat)
+  }));
+
+  let active = sections[0].cat;
+  for (const { cat, el } of sections) {
+    const rect = el.getBoundingClientRect();
+    if (rect.top <= 100) active = cat;
+  }
+
+  document.querySelectorAll(".cat-pill").forEach(p => {
+    const isActive = p.dataset.cat === active;
+    p.classList.toggle("active", isActive);
+    if (isActive) p.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+  });
+}
+
+// ── ITEM MODAL ────────────────────────────────────────────────────────────────
+function openItemModal(item) {
+  currentItem = item;
+  currentQty = 1;
+  modalMode = 'item';
+
+  const body = document.getElementById("modalBody");
+  const emoji = EMOJI[getCatOf(item)] || '🍽';
+
+  const imgHtml = item.img
+    ? `<img class="item-modal-img" src="${item.img}" alt="${item.name}" onerror="this.outerHTML='<div class=\\'item-modal-img-placeholder\\'>${emoji}</div>'">`
+    : `<div class="item-modal-img-placeholder">${emoji}</div>`;
+
+  body.innerHTML = `
+    ${imgHtml}
+    <div class="item-modal-name">${item.name}</div>
+    <div class="item-modal-desc">${item.desc}</div>
+    <div class="divider"></div>
+    <div class="qty-row">
+      <span class="qty-label">Daudzums</span>
+      <div class="qty-controls">
+        <button class="qty-btn" onclick="changeQty(-1)">−</button>
+        <span class="qty-num" id="qtyNum">1</span>
+        <button class="qty-btn" onclick="changeQty(1)">+</button>
+      </div>
+    </div>
+    <button class="btn-primary" id="addBtn" onclick="addToCart()">
+      <span>Pievienot grozam</span>
+      <span id="addBtnPrice">${item.price.toFixed(2)} €</span>
+    </button>
+    <button class="btn-secondary" onclick="closeModal()">Aizvērt</button>
+  `;
+
+  openModal();
+}
+
+function changeQty(delta) {
+  currentQty = Math.max(1, currentQty + delta);
+  document.getElementById("qtyNum").textContent = currentQty;
+  document.getElementById("addBtnPrice").textContent = (currentItem.price * currentQty).toFixed(2) + " €";
+}
+
+function addToCart() {
+  const existing = cart.find(c => c.item === currentItem);
+  if (existing) {
+    existing.qty += currentQty;
+  } else {
+    cart.push({ item: currentItem, qty: currentQty });
+  }
+  updateCartUI();
+  closeModal();
+}
+
+// ── CART MODAL ────────────────────────────────────────────────────────────────
+function openCartModal() {
+  modalMode = 'cart';
+  renderCartModal();
+  openModal();
+}
+
+function renderCartModal() {
+  const body = document.getElementById("modalBody");
+
+  if (cart.length === 0) {
+    body.innerHTML = `
+      <div class="modal-title">Grozs</div>
+      <div class="empty-cart">
+        <div class="icon">🛒</div>
+        Grozs ir tukšs
+      </div>
+      <button class="btn-secondary" onclick="closeModal()">Aizvērt</button>
+    `;
+    return;
+  }
+
+  const total = calcTotal();
+  let itemsHtml = '';
+
+  cart.forEach((entry, idx) => {
+    const emoji = EMOJI[getCatOf(entry.item)] || '🍽';
+    const imgHtml = entry.item.img
+      ? `<img class="cart-item-img" src="${entry.item.img}" alt="${entry.item.name}" onerror="this.outerHTML='<div class=\\'cart-item-img-placeholder\\'>${emoji}</div>'">`
+      : `<div class="cart-item-img-placeholder">${emoji}</div>`;
+
+    itemsHtml += `
+      <div class="cart-item-row" id="ci-${idx}">
+        ${imgHtml}
+        <div class="cart-item-info">
+          <div class="cart-item-name">${entry.item.name}</div>
+          <div class="cart-item-price">${entry.item.price.toFixed(2)} €</div>
+        </div>
+        <div class="cart-item-controls">
+          <button class="cart-ctrl-btn" onclick="cartChange(${idx}, -1)">−</button>
+          <span class="cart-ctrl-num" id="cqty-${idx}">${entry.qty}</span>
+          <button class="cart-ctrl-btn" onclick="cartChange(${idx}, 1)">+</button>
+        </div>
+      </div>
+    `;
+  });
+
+  body.innerHTML = `
+    <div class="modal-title">Grozs</div>
+    <div id="cart-items-list">${itemsHtml}</div>
+    <div class="total-row">
+      <span class="total-label">Kopā</span>
+      <span class="total-amount" id="cartTotal">${total.toFixed(2)} €</span>
+    </div>
+    <button class="btn-primary" onclick="openPayment()">
+      <span>Turpināt uz apmaksu</span>
+      <span>${total.toFixed(2)} €</span>
+    </button>
+    <button class="btn-secondary" onclick="closeModal()">Turpināt iepirkties</button>
+  `;
+}
+
+function cartChange(idx, delta) {
+  cart[idx].qty += delta;
+  if (cart[idx].qty <= 0) {
+    cart.splice(idx, 1);
+    updateCartUI();
+    renderCartModal();
+    return;
+  }
+  const qtyEl = document.getElementById("cqty-" + idx);
+  if (qtyEl) qtyEl.textContent = cart[idx].qty;
+  updateCartUI();
+  const total = calcTotal();
+  const totalEl = document.getElementById("cartTotal");
+  if (totalEl) totalEl.textContent = total.toFixed(2) + " €";
+}
+
+// ── PAYMENT ───────────────────────────────────────────────────────────────────
+function openPayment() {
+  modalMode = 'payment';
+  const body = document.getElementById("modalBody");
+  const total = calcTotal();
+
+  body.innerHTML = `
+    <div class="modal-title">Apmaksa</div>
+    <div class="modal-subtitle">Kopā: ${total.toFixed(2)} €</div>
+    <div class="pay-options">
+      <button class="pay-btn apple" onclick="successOrder()">
+        <span class="pay-icon"> Pay</span>
+        <span>Apple Pay</span>
+      </button>
+      <button class="pay-btn google" onclick="successOrder()">
+        <span class="pay-icon">G Pay</span>
+        <span>Google Pay</span>
+      </button>
+      <button class="pay-btn" onclick="successOrder()">
+        <span class="pay-icon">💳</span>
+        <span>Karte</span>
+      </button>
+      <button class="pay-btn" onclick="showCash()">
+        <span class="pay-icon">💵</span>
+        <span>Skaidrā</span>
+      </button>
+    </div>
+    <div class="divider"></div>
+    <input class="input-field" placeholder="E-pasts (kvīts)">
+    <input class="input-field" placeholder="Tālrunis">
+    <button class="btn-primary" onclick="successOrder()">
+      <span>Apstiprināt</span>
+      <span>${total.toFixed(2)} €</span>
+    </button>
+    <button class="btn-secondary" onclick="openCartModal()">← Atpakaļ</button>
+  `;
+}
+
+function showCash() {
+  modalMode = 'cash';
+  const body = document.getElementById("modalBody");
+  const orderData = encodeURIComponent(JSON.stringify({ items: cart.map(c => ({ n: c.item.name, q: c.qty })), total: calcTotal() }));
+
+  body.innerHTML = `
+    <div class="modal-title" style="text-align:center">Maksājiet kasē</div>
+    <div class="qr-container">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=order:${Date.now()}&bgcolor=FFFFFF&color=1C1C1E&qzone=2" alt="QR kods">
+      <div class="qr-label">Parādiet šo QR kodu kasierim</div>
+    </div>
+    <button class="btn-primary" onclick="successOrder()">
+      <span>Apstiprināt pasūtījumu</span>
+      <span>${calcTotal().toFixed(2)} €</span>
+    </button>
+    <button class="btn-secondary" onclick="openPayment()">← Atpakaļ</button>
+  `;
+}
+
+function successOrder() {
+  const body = document.getElementById("modalBody");
+  body.innerHTML = `
+    <div class="success-icon">✓</div>
+    <div class="success-title">Pasūtījums pieņemts!</div>
+    <div class="success-sub">Jūsu ēdiens tiek gatavots. Paldies!</div>
+    <button class="btn-primary" onclick="resetOrder()" style="justify-content:center">Jauns pasūtījums</button>
+  `;
+}
+
+function resetOrder() {
+  cart = [];
+  updateCartUI();
+  closeModal();
+}
+
+// ── MODAL HELPERS ─────────────────────────────────────────────────────────────
+function openModal() {
+  const overlay = document.getElementById("modalOverlay");
+  const sheet = document.getElementById("modalSheet");
+  overlay.style.display = "block";
+  requestAnimationFrame(() => {
+    overlay.classList.add("open");
+    sheet.classList.add("open");
+  });
+  document.body.style.overflow = "hidden";
+}
+
+function closeModal() {
+  const overlay = document.getElementById("modalOverlay");
+  const sheet = document.getElementById("modalSheet");
+  overlay.classList.remove("open");
+  sheet.classList.remove("open");
+  setTimeout(() => {
+    overlay.style.display = "none";
+    document.body.style.overflow = "";
+  }, 380);
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById("modalOverlay")) closeModal();
+}
+
+// ── CART UI ───────────────────────────────────────────────────────────────────
+function calcTotal() {
+  return cart.reduce((s, c) => s + c.item.price * c.qty, 0);
+}
+
+function calcCount() {
+  return cart.reduce((s, c) => s + c.qty, 0);
+}
+
+function updateCartUI() {
+  const count = calcCount();
+  const total = calcTotal();
+  const bar = document.getElementById("cartBar");
+  const headerCart = document.getElementById("headerCart");
+
+  document.getElementById("cartBarCount").textContent = count;
+  document.getElementById("cartBarTotal").textContent = total.toFixed(2) + " €";
+  document.getElementById("headerCartCount").textContent = count;
+
+  if (count > 0) {
+    bar.classList.add("visible");
+    headerCart.style.display = "flex";
+    bar.classList.remove("bounce");
+    void bar.offsetWidth;
+    bar.classList.add("bounce");
+  } else {
+    bar.classList.remove("visible");
+    headerCart.style.display = "none";
+  }
+}
 
 render();
-
-
 </script>
-
 
 </body>
 </html>
