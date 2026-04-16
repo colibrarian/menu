@@ -1,0 +1,330 @@
+﻿<!DOCTYPE html>
+<html lang="lv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ēdienkarte</title>
+
+
+<style>
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    background: linear-gradient(180deg, #f8f9fb, #eef1f5);
+    color: #111;
+}
+
+
+/* HEADER */
+header {
+    position: sticky;
+    top: 0;
+    backdrop-filter: blur(12px);
+    background: rgba(255,255,255,0.7);
+    padding: 15px;
+    text-align: center;
+    font-weight: 600;
+}
+
+
+/* CATEGORY BLOCK */
+.section {
+    padding: 20px 15px;
+}
+
+
+.section h2 {
+    margin-bottom: 15px;
+}
+
+
+/* CARDS */
+.card {
+    background: rgba(255,255,255,0.6);
+    backdrop-filter: blur(14px);
+    border-radius: 20px;
+    padding: 12px;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    display: flex;
+    gap: 12px;
+    cursor: pointer;
+}
+
+
+.card img {
+    width: 90px;
+    height: 90px;
+    border-radius: 14px;
+    object-fit: cover;
+}
+
+
+.card h4 {
+    margin: 0;
+}
+
+
+.card p {
+    margin: 5px 0;
+    color: #666;
+    font-size: 14px;
+}
+
+
+/* CART BAR */
+.cart {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    background: rgba(255,255,255,0.8);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+
+/* MODAL */
+.modal {
+    position: fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background: rgba(0,0,0,0.3);
+    display:none;
+    justify-content:center;
+    align-items:flex-end;
+}
+
+
+.modal-content {
+    width:100%;
+    background:white;
+    border-radius:20px 20px 0 0;
+    padding:20px;
+    animation: slideUp 0.3s ease;
+}
+
+
+@keyframes slideUp {
+    from {transform: translateY(100%);}
+    to {transform: translateY(0);}
+}
+
+
+button {
+    background: #111;
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 12px;
+    width: 100%;
+    margin-top: 10px;
+}
+
+
+input {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+
+</style>
+</head>
+
+
+<body>
+
+
+<header>Ēdienkarte</header>
+
+
+<div id="content"></div>
+
+
+<div class="cart" onclick="openCart()">Grozs (0)</div>
+
+
+<div class="modal" id="modal">
+  <div class="modal-content" id="modalContent"></div>
+</div>
+
+
+<script>
+
+
+const data = {
+"Dienas zupa":[
+ {name:"Tomātu zupa", price:4, desc:"Ar baziliku"}
+],
+"Gaļas ēdieni":[
+ {name:"Cūkgaļas šašliks", price:10, desc:"Ar piedevām"},
+ {name:"Vistas šašliks", price:9, desc:"Maigs un sulīgs"}
+],
+"Salāti":[
+ {name:"Cēzara salāti", price:7, desc:"Ar vistu"}
+],
+"Uzkodas":[
+ {name:"Frī kartupeļi", price:4, desc:"Kraukšķīgi"},
+ {name:"Grilēti dārzeņi", price:5, desc:"Sezonas"}
+],
+"Mērces":[
+ {name:"Ķiploku mērce", price:1, desc:"Krēmīga"},
+ {name:"BBQ mērce", price:1, desc:"Saldena"}
+],
+"Dzērieni":[
+ {name:"Kola", price:2, desc:"Auksta"},
+ {name:"Ūdens", price:1, desc:"Negāzēts"}
+]
+};
+
+
+let cart=[];
+
+
+const content=document.getElementById("content");
+
+
+function render(){
+    Object.keys(data).forEach(cat=>{
+        let section=document.createElement("div");
+        section.className="section";
+        section.innerHTML=`<h2>${cat}</h2>`;
+
+
+        data[cat].forEach(item=>{
+            let card=document.createElement("div");
+            card.className="card";
+            card.innerHTML=`
+                <img src="https://via.placeholder.com/150">
+                <div>
+                    <h4>${item.name}</h4>
+                    <p>${item.desc}</p>
+                    <b>${item.price} €</b>
+                </div>
+            `;
+            card.onclick=()=>openItem(item);
+            section.appendChild(card);
+        });
+
+
+        content.appendChild(section);
+    });
+}
+
+
+function openItem(item){
+    const modal=document.getElementById("modal");
+    const content=document.getElementById("modalContent");
+
+
+    content.innerHTML=`
+        <h2>${item.name}</h2>
+        <p>${item.desc}</p>
+        <p><b>Cena:</b> ${item.price} €</p>
+        <input type="number" id="qty" value="1" min="1">
+        <button onclick='add(${JSON.stringify(item)})'>Pievienot grozam</button>
+        <button onclick="closeModal()">Aizvērt</button>
+    `;
+    modal.style.display="flex";
+}
+
+
+function closeModal(){
+    document.getElementById("modal").style.display="none";
+}
+
+
+function add(item){
+    let qty=document.getElementById("qty").value;
+    cart.push({...item, qty});
+    updateCart();
+    closeModal();
+}
+
+
+function updateCart(){
+    document.querySelector(".cart").innerText="Grozs ("+cart.length+")";
+}
+
+
+function openCart(){
+    let modal=document.getElementById("modal");
+    let content=document.getElementById("modalContent");
+
+
+    let total=0;
+    let html="<h2>Grozs</h2>";
+
+
+    cart.forEach(i=>{
+        total+=i.price*i.qty;
+        html+=`<p>${i.name} x${i.qty}</p>`;
+    });
+
+
+    html+=`<h3>Kopā: ${total} €</h3>`;
+
+
+    html+=`
+        <button onclick="payment()">Turpināt</button>
+        <button onclick="closeModal()">Aizvērt</button>
+    `;
+
+
+    content.innerHTML=html;
+    modal.style.display="flex";
+}
+
+
+function payment(){
+    let content=document.getElementById("modalContent");
+
+
+    content.innerHTML=`
+        <h2>Apmaksa</h2>
+
+
+        <button>Apple Pay</button>
+        <button>Google Pay</button>
+        <button>Karte</button>
+        <button onclick="cash()">Skaidrā naudā</button>
+
+
+        <input placeholder="E-pasts">
+        <input placeholder="Tālrunis">
+
+
+        <button onclick="closeModal()">Apstiprināt</button>
+    `;
+}
+
+
+function cash(){
+    let content=document.getElementById("modalContent");
+
+
+    content.innerHTML=`
+        <h2>Parādiet QR kodu kasē</h2>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=order123">
+        <button onclick="closeModal()">Aizvērt</button>
+    `;
+}
+
+
+render();
+
+
+</script>
+
+
+</body>
+</html>
