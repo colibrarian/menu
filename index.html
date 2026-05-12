@@ -2,50 +2,131 @@
 <html lang="lv">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Ēdienkarte</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Grill In — Ēdienkarte</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 
 <style>
+/* ═══════════════════════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════════════════════ */
 :root {
-  --bg: #F2F2F7;
-  --surface: rgba(255,255,255,0.85);
-  --surface-solid: #FFFFFF;
-  --text: #1C1C1E;
-  --text-secondary: #6C6C70;
-  --accent: #FF3B30;
-  --accent-soft: rgba(255,59,48,0.1);
-  --border: rgba(0,0,0,0.06);
-  --shadow: 0 2px 20px rgba(0,0,0,0.08);
-  --shadow-card: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.06);
-  --radius: 16px;
-  --radius-sm: 10px;
-  --font: -apple-system, 'SF Pro Display', BlinkMacSystemFont, sans-serif;
+  --bg:            #F5F4F0;
+  --surface:       #FFFFFF;
+  --surface-warm:  #FAF9F6;
+  --text:          #1A1A18;
+  --text-2:        #6B6960;
+  --text-3:        #9E9D97;
+  --accent:        #C8410A;
+  --accent-soft:   rgba(200,65,10,0.10);
+  --accent-hover:  #A83508;
+  --gold:          #B8882A;
+  --border:        rgba(26,26,24,0.08);
+  --border-med:    rgba(26,26,24,0.12);
+  --shadow-sm:     0 1px 4px rgba(0,0,0,0.06);
+  --shadow-md:     0 4px 20px rgba(0,0,0,0.09);
+  --shadow-lg:     0 12px 40px rgba(0,0,0,0.14);
+  --r:             14px;
+  --r-sm:          10px;
+  --font-body:     'DM Sans', sans-serif;
+  --font-display:  'DM Serif Display', serif;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-html { font-size: 16px; }
-
+/* ═══════════════════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════════════════ */
+*, *::before, *::after {
+  margin: 0; padding: 0; box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+html { font-size: 16px; scroll-behavior: smooth; }
 body {
-  font-family: var(--font);
+  font-family: var(--font-body);
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
-  overscroll-behavior: none;
+  overscroll-behavior-y: none;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* ─── HEADER ─── */
+/* ═══════════════════════════════════════════════════════
+   COOKIE BANNER
+═══════════════════════════════════════════════════════ */
+#cookieBanner {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 9999;
+  background: var(--text);
+  color: #fff;
+  padding: 20px 20px calc(20px + env(safe-area-inset-bottom, 0px));
+  box-shadow: 0 -8px 30px rgba(0,0,0,0.2);
+  transform: translateY(0);
+  transition: transform 0.4s cubic-bezier(0.32,0.72,0,1);
+}
+#cookieBanner.hidden { transform: translateY(110%); pointer-events: none; }
+
+.cookie-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+.cookie-text {
+  font-size: 13px;
+  color: rgba(255,255,255,0.72);
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+.cookie-text a { color: rgba(255,255,255,0.9); text-decoration: underline; cursor: pointer; }
+
+.cookie-toggles {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.cookie-toggle-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.cookie-toggle-row input[type="checkbox"] {
+  width: 18px; height: 18px;
+  accent-color: var(--accent);
+  margin-top: 2px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.cookie-toggle-label { font-size: 13px; line-height: 1.4; }
+.cookie-toggle-label strong { font-weight: 600; color: #fff; display: block; }
+.cookie-toggle-label span { color: rgba(255,255,255,0.6); }
+
+.cookie-actions { display: flex; gap: 10px; }
+.cookie-btn {
+  flex: 1; height: 46px;
+  border: none; border-radius: var(--r-sm);
+  font-family: var(--font-body);
+  font-size: 14px; font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.15s;
+}
+.cookie-btn:active { transform: scale(0.96); opacity: 0.85; }
+.cookie-btn-primary { background: var(--accent); color: #fff; }
+.cookie-btn-secondary {
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+}
+
+/* ═══════════════════════════════════════════════════════
+   HEADER
+═══════════════════════════════════════════════════════ */
 .header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  backdrop-filter: saturate(180%) blur(20px);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-  background: rgba(242,242,247,0.82);
-  border-bottom: 0.5px solid var(--border);
-  padding: 12px 16px 8px;
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(245,244,240,0.88);
+  backdrop-filter: saturate(180%) blur(24px);
+  -webkit-backdrop-filter: saturate(180%) blur(24px);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 16px 0;
 }
 
 .header-top {
@@ -55,30 +136,65 @@ body {
   margin-bottom: 10px;
 }
 
-.header h1 {
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: -0.4px;
+.header-brand {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.header-brand-name {
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: -0.3px;
+  line-height: 1;
+}
+.header-brand-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-bottom: 3px;
 }
 
-.header-badge {
+.header-right { display: flex; align-items: center; gap: 8px; }
+
+/* Language switcher */
+.lang-switch {
+  display: flex;
+  background: rgba(26,26,24,0.07);
+  border-radius: 20px;
+  padding: 2px;
+  gap: 2px;
+}
+.lang-btn {
+  font-size: 11px; font-weight: 600;
+  font-family: var(--font-body);
+  padding: 4px 8px;
+  border-radius: 18px;
+  border: none;
+  background: transparent;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.lang-btn.active { background: var(--text); color: #fff; }
+
+/* Cart badge in header */
+.header-cart-btn {
   background: var(--accent);
   color: white;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 4px 10px;
+  font-size: 12px; font-weight: 700;
+  font-family: var(--font-body);
+  padding: 5px 10px;
   border-radius: 20px;
   cursor: pointer;
-  transition: transform 0.15s, opacity 0.15s;
-  display: flex;
+  display: none;
   align-items: center;
   gap: 5px;
+  transition: transform 0.15s, opacity 0.15s;
+  border: none;
 }
-
-.header-badge:active { transform: scale(0.94); opacity: 0.85; }
-
-.header-badge .cart-count {
-  background: rgba(255,255,255,0.3);
+.header-cart-btn:active { transform: scale(0.94); opacity: 0.85; }
+.header-cart-count {
+  background: rgba(255,255,255,0.25);
   border-radius: 10px;
   padding: 0 5px;
   font-size: 11px;
@@ -86,792 +202,1076 @@ body {
   text-align: center;
 }
 
-/* ─── CATEGORY PILLS ─── */
-.cat-scroll {
+/* Table number chip */
+.table-chip {
   display: flex;
-  gap: 7px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  padding: 2px 0;
-  scroll-snap-type: x mandatory;
+  align-items: center;
+  gap: 5px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 12px; font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-bottom: 8px;
 }
 
+/* Category pills */
+.cat-scroll {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 0 0 10px;
+  scroll-snap-type: x mandatory;
+}
 .cat-scroll::-webkit-scrollbar { display: none; }
 
 .cat-pill {
   flex-shrink: 0;
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 13px; font-weight: 500;
+  font-family: var(--font-body);
   padding: 6px 13px;
   border-radius: 20px;
-  background: rgba(0,0,0,0.06);
-  color: var(--text-secondary);
+  background: rgba(26,26,24,0.07);
+  color: var(--text-2);
+  border: none;
   cursor: pointer;
   scroll-snap-align: start;
   transition: background 0.2s, color 0.2s;
   white-space: nowrap;
 }
+.cat-pill.active { background: var(--text); color: white; }
 
-.cat-pill.active {
-  background: var(--text);
-  color: white;
-}
-
-/* ─── CONTENT ─── */
+/* ═══════════════════════════════════════════════════════
+   CONTENT
+═══════════════════════════════════════════════════════ */
 .content {
-  padding: 16px;
-  padding-bottom: 100px;
+  padding: 16px 16px 110px;
+  max-width: 520px;
+  margin: 0 auto;
 }
 
-/* ─── SECTION ─── */
+/* ═══════════════════════════════════════════════════════
+   SECTION
+═══════════════════════════════════════════════════════ */
 .section {
-  margin-bottom: 28px;
+  margin-bottom: 32px;
   opacity: 0;
-  transform: translateY(20px);
-  animation: fadeUp 0.45s ease forwards;
+  transform: translateY(16px);
+  animation: fadeUp 0.4s ease forwards;
 }
-
-.section:nth-child(1) { animation-delay: 0.05s; }
-.section:nth-child(2) { animation-delay: 0.1s; }
-.section:nth-child(3) { animation-delay: 0.15s; }
-.section:nth-child(4) { animation-delay: 0.2s; }
-.section:nth-child(5) { animation-delay: 0.25s; }
-.section:nth-child(6) { animation-delay: 0.3s; }
+.section:nth-child(1)  { animation-delay: 0.04s; }
+.section:nth-child(2)  { animation-delay: 0.08s; }
+.section:nth-child(3)  { animation-delay: 0.12s; }
+.section:nth-child(4)  { animation-delay: 0.16s; }
+.section:nth-child(5)  { animation-delay: 0.20s; }
+.section:nth-child(6)  { animation-delay: 0.24s; }
+.section:nth-child(7)  { animation-delay: 0.28s; }
+.section:nth-child(8)  { animation-delay: 0.32s; }
+.section:nth-child(9)  { animation-delay: 0.36s; }
+.section:nth-child(10) { animation-delay: 0.40s; }
+.section:nth-child(11) { animation-delay: 0.44s; }
+.section:nth-child(12) { animation-delay: 0.48s; }
+.section.hidden { display: none; }
 
 @keyframes fadeUp {
   to { opacity: 1; transform: translateY(0); }
 }
 
-.section-title {
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: -0.4px;
+.section-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
   margin-bottom: 10px;
   padding-left: 2px;
 }
+.section-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: -0.3px;
+}
+.section-count {
+  font-size: 12px;
+  color: var(--text-3);
+  font-weight: 500;
+}
 
-/* ─── CARDS ─── */
+/* ═══════════════════════════════════════════════════════
+   CARDS
+═══════════════════════════════════════════════════════ */
 .card {
   background: var(--surface);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: var(--radius);
-  margin-bottom: 10px;
-  box-shadow: var(--shadow-card);
+  border-radius: var(--r);
+  margin-bottom: 8px;
+  box-shadow: var(--shadow-sm);
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 10px;
   cursor: pointer;
   transition: transform 0.18s, box-shadow 0.18s;
-  border: 0.5px solid rgba(255,255,255,0.8);
+  border: 1px solid var(--border);
   overflow: hidden;
   position: relative;
 }
-
-.card::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0);
-  transition: background 0.15s;
-  border-radius: var(--radius);
-}
-
-.card:active { transform: scale(0.975); box-shadow: 0 1px 6px rgba(0,0,0,0.08); }
-.card:active::after { background: rgba(0,0,0,0.03); }
+.card:active { transform: scale(0.976); box-shadow: none; }
 
 .card-img {
-  width: 80px;
-  height: 80px;
-  border-radius: var(--radius-sm);
+  width: 80px; height: 80px;
+  border-radius: var(--r-sm);
   object-fit: cover;
   flex-shrink: 0;
   background: var(--bg);
 }
 
+/* Placeholder image area — backend replaces with real img src */
 .card-img-placeholder {
-  width: 80px;
-  height: 80px;
-  border-radius: var(--radius-sm);
-  background: linear-gradient(135deg, #F0F0F5 0%, #E0E0E8 100%);
+  width: 80px; height: 80px;
+  border-radius: var(--r-sm);
+  background: linear-gradient(135deg, #EDECEA 0%, #DDDBD7 100%);
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 28px;
+  position: relative;
+  overflow: hidden;
+}
+.card-img-placeholder::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, transparent 60%);
 }
 
 .card-body { flex: 1; min-width: 0; }
-
 .card-name {
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 15px; font-weight: 600;
   letter-spacing: -0.2px;
   margin-bottom: 2px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-
-.card-desc {
-  font-size: 13px;
-  color: var(--text-secondary);
-  margin-bottom: 6px;
-}
-
-.card-price {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text);
-}
+.card-desc { font-size: 13px; color: var(--text-2); margin-bottom: 6px; line-height: 1.3; }
+.card-price { font-size: 15px; font-weight: 700; color: var(--text); }
+.card-price-unavail { font-size: 12px; color: var(--text-3); font-weight: 500; }
 
 .card-add {
-  width: 30px;
-  height: 30px;
+  width: 32px; height: 32px;
   border-radius: 50%;
   background: var(--accent);
   color: white;
-  font-size: 20px;
-  font-weight: 300;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  font-size: 20px; font-weight: 300;
+  display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
-  transition: transform 0.15s;
+  transition: transform 0.15s, background 0.15s;
   line-height: 1;
-  padding-bottom: 1px;
+  border: none;
+  cursor: pointer;
 }
+.card:active .card-add { transform: scale(0.85); background: var(--accent-hover); }
 
-.card:active .card-add { transform: scale(0.88); }
+/* Unavailable state */
+.card.unavailable { opacity: 0.45; }
+.card.unavailable .card-add { background: var(--border-med); }
 
-/* ─── BOTTOM CART BAR ─── */
+/* ═══════════════════════════════════════════════════════
+   BOTTOM CART BAR
+═══════════════════════════════════════════════════════ */
 .cart-bar {
   position: fixed;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  left: 50%; transform: translateX(-50%) translateY(90px);
   width: calc(100% - 32px);
-  max-width: 430px;
+  max-width: 480px;
   background: var(--text);
   color: white;
-  border-radius: 16px;
+  border-radius: var(--r);
   padding: 0 16px;
-  height: 54px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
   cursor: pointer;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
-  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s;
+  box-shadow: var(--shadow-lg);
+  transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s;
   z-index: 200;
   opacity: 0;
-  transform: translateX(-50%) translateY(80px);
+  border: none;
 }
+.cart-bar.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+.cart-bar:active { transform: translateX(-50%) scale(0.97) !important; }
 
-.cart-bar.visible {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
-
-.cart-bar:active { transform: translateX(-50%) scale(0.97); }
-
-.cart-bar-left {
-  background: rgba(255,255,255,0.15);
+.cart-bar-badge {
+  background: var(--accent);
   border-radius: 8px;
-  padding: 4px 8px;
-  font-size: 13px;
-  font-weight: 600;
-  min-width: 26px;
-  text-align: center;
+  padding: 4px 9px;
+  font-size: 13px; font-weight: 700;
+  min-width: 28px; text-align: center;
 }
+.cart-bar-label { font-size: 15px; font-weight: 600; letter-spacing: -0.2px; }
+.cart-bar-total { font-size: 15px; font-weight: 700; }
 
-.cart-bar-mid {
-  font-size: 15px;
-  font-weight: 600;
+@keyframes cartBounce {
+  0%   { transform: translateX(-50%) translateY(0) scale(1); }
+  40%  { transform: translateX(-50%) translateY(-8px) scale(1.03); }
+  70%  { transform: translateX(-50%) translateY(2px) scale(0.98); }
+  100% { transform: translateX(-50%) translateY(0) scale(1); }
 }
+.cart-bar.bounce { animation: cartBounce 0.38s ease; }
 
-.cart-bar-right {
-  font-size: 15px;
-  font-weight: 600;
-}
-
-/* ─── MODAL ─── */
+/* ═══════════════════════════════════════════════════════
+   MODAL
+═══════════════════════════════════════════════════════ */
 .modal-overlay {
-  position: fixed;
-  inset: 0;
+  position: fixed; inset: 0;
   background: rgba(0,0,0,0);
   z-index: 300;
   display: none;
   transition: background 0.3s;
 }
-
-.modal-overlay.open {
-  background: rgba(0,0,0,0.4);
-}
+.modal-overlay.open { background: rgba(0,0,0,0.45); }
 
 .modal-sheet {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: var(--surface-solid);
+  bottom: 0; left: 0; right: 0;
+  background: var(--surface);
   border-radius: 24px 24px 0 0;
-  padding: 0 0 env(safe-area-inset-bottom, 20px);
-  max-height: 90vh;
+  padding-bottom: env(safe-area-inset-bottom, 20px);
+  max-height: 92vh;
   overflow-y: auto;
+  overflow-x: hidden;
   transform: translateY(100%);
-  transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+  transition: transform 0.38s cubic-bezier(0.32,0.72,0,1);
 }
-
-.modal-sheet.open {
-  transform: translateY(0);
-}
+.modal-sheet.open { transform: translateY(0); }
 
 .modal-handle {
-  width: 36px;
-  height: 5px;
-  background: #E0E0E0;
+  width: 38px; height: 4px;
+  background: #DDDBD7;
   border-radius: 3px;
   margin: 10px auto 0;
 }
 
-.modal-body { padding: 16px 20px 20px; }
+.modal-body { padding: 16px 20px 24px; }
 
-/* Item modal */
+/* Item modal image */
 .item-modal-img {
-  width: 100%;
-  height: 220px;
+  width: 100%; height: 220px;
   object-fit: cover;
-  border-radius: var(--radius);
+  border-radius: var(--r);
   margin-bottom: 16px;
   background: var(--bg);
+  display: block;
 }
-
 .item-modal-img-placeholder {
-  width: 100%;
-  height: 160px;
-  background: linear-gradient(135deg, #F0F0F5, #E0E0E8);
-  border-radius: var(--radius);
+  width: 100%; height: 180px;
+  background: linear-gradient(135deg, #EDECEA, #DDDBD7);
+  border-radius: var(--r);
   margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 60px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 64px;
 }
 
 .item-modal-name {
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: -0.5px;
+  font-family: var(--font-display);
+  font-size: 24px; letter-spacing: -0.4px;
   margin-bottom: 4px;
 }
-
 .item-modal-desc {
-  font-size: 15px;
-  color: var(--text-secondary);
+  font-size: 15px; color: var(--text-2);
+  margin-bottom: 16px; line-height: 1.5;
+}
+.item-modal-meta {
+  display: flex; gap: 8px; flex-wrap: wrap;
   margin-bottom: 16px;
 }
+.item-modal-tag {
+  font-size: 12px; font-weight: 600;
+  background: var(--bg); color: var(--text-2);
+  padding: 3px 9px; border-radius: 20px;
+}
+
+.divider { height: 1px; background: var(--border); margin: 4px 0 16px; }
 
 .qty-row {
-  display: flex;
-  align-items: center;
+  display: flex; align-items: center;
   justify-content: space-between;
   margin-bottom: 16px;
 }
-
 .qty-label { font-size: 15px; font-weight: 500; }
-
 .qty-controls {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: var(--bg);
-  border-radius: 12px;
-  padding: 4px;
+  display: flex; align-items: center; gap: 12px;
+  background: var(--bg); border-radius: 12px; padding: 4px;
 }
-
 .qty-btn {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: white;
-  border: none;
-  font-size: 18px;
-  font-weight: 400;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  transition: transform 0.12s;
-  color: var(--text);
-  width: auto;
-  padding: 0 12px;
+  min-width: 38px; height: 34px;
+  border-radius: 9px; background: white;
+  border: none; font-size: 18px; font-weight: 400;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.12s; color: var(--text);
+  padding: 0 10px;
 }
-
 .qty-btn:active { transform: scale(0.9); }
-
-.qty-num {
-  font-size: 16px;
-  font-weight: 600;
-  min-width: 24px;
-  text-align: center;
-}
+.qty-num { font-size: 16px; font-weight: 700; min-width: 24px; text-align: center; }
 
 /* Buttons */
 .btn-primary {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  background: var(--accent);
-  color: white;
-  border: none;
-  border-radius: 14px;
-  padding: 0 16px;
-  height: 52px;
-  font-size: 16px;
-  font-weight: 600;
-  font-family: var(--font);
-  cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; background: var(--accent); color: white;
+  border: none; border-radius: var(--r);
+  padding: 0 18px; height: 54px;
+  font-size: 16px; font-weight: 600;
+  font-family: var(--font-body); cursor: pointer;
   transition: transform 0.15s, opacity 0.15s;
   letter-spacing: -0.2px;
 }
-
 .btn-primary:active { transform: scale(0.97); opacity: 0.88; }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
 
 .btn-secondary {
-  display: block;
-  width: 100%;
-  background: var(--bg);
-  color: var(--text);
-  border: none;
-  border-radius: 14px;
-  padding: 0 16px;
-  height: 48px;
-  font-size: 15px;
-  font-weight: 500;
-  font-family: var(--font);
-  cursor: pointer;
+  display: block; width: 100%;
+  background: var(--bg); color: var(--text);
+  border: none; border-radius: var(--r);
+  padding: 0 18px; height: 48px;
+  font-size: 15px; font-weight: 500;
+  font-family: var(--font-body); cursor: pointer;
   margin-top: 8px;
   transition: opacity 0.15s;
-  letter-spacing: -0.2px;
 }
-
 .btn-secondary:active { opacity: 0.6; }
-
-.btn-dark {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  background: #1C1C1E;
-  color: white;
-  border: none;
-  border-radius: 14px;
-  padding: 0 16px;
-  height: 52px;
-  font-size: 16px;
-  font-weight: 600;
-  font-family: var(--font);
-  cursor: pointer;
-  margin-bottom: 8px;
-  transition: transform 0.15s;
-}
-
-.btn-dark:active { transform: scale(0.97); }
-
-/* Cart modal */
-.cart-item-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 0;
-  border-bottom: 0.5px solid var(--border);
-}
-
-.cart-item-img {
-  width: 50px;
-  height: 50px;
-  border-radius: 10px;
-  object-fit: cover;
-  background: var(--bg);
-  flex-shrink: 0;
-}
-
-.cart-item-img-placeholder {
-  width: 50px;
-  height: 50px;
-  border-radius: 10px;
-  background: var(--bg);
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 22px;
-}
-
-.cart-item-info { flex: 1; }
-.cart-item-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
-.cart-item-price { font-size: 13px; color: var(--text-secondary); }
-
-.cart-item-controls {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--bg);
-  border-radius: 10px;
-  padding: 3px;
-}
-
-.cart-ctrl-btn {
-  width: 26px;
-  height: 26px;
-  border-radius: 7px;
-  background: white;
-  border: none;
-  font-size: 16px;
-  font-family: var(--font);
-  cursor: pointer;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.1s;
-  color: var(--text);
-}
-
-.cart-ctrl-btn:active { transform: scale(0.85); }
-.cart-ctrl-num { font-size: 14px; font-weight: 600; min-width: 16px; text-align: center; }
-
-.total-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 0 4px;
-}
-
-.total-label { font-size: 16px; font-weight: 500; color: var(--text-secondary); }
-.total-amount { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
-
-/* Payment */
-.pay-options {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 12px;
-}
-
-.pay-btn {
-  height: 58px;
-  border: none;
-  border-radius: 14px;
-  background: var(--bg);
-  font-family: var(--font);
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  transition: transform 0.15s, background 0.15s;
-  color: var(--text);
-}
-
-.pay-btn:active { transform: scale(0.95); background: #E5E5EA; }
-
-.pay-btn .pay-icon { font-size: 22px; }
-
-.pay-btn.apple { background: #1C1C1E; color: white; }
-.pay-btn.google { background: white; border: 0.5px solid rgba(0,0,0,0.1); }
-
-.input-field {
-  width: 100%;
-  padding: 0 14px;
-  height: 48px;
-  background: var(--bg);
-  border: none;
-  border-radius: 12px;
-  font-size: 15px;
-  font-family: var(--font);
-  color: var(--text);
-  margin-bottom: 10px;
-  outline: none;
-  transition: box-shadow 0.2s;
-}
-
-.input-field:focus { box-shadow: 0 0 0 3px rgba(255,59,48,0.15); }
-.input-field::placeholder { color: #AEAEB2; }
-
-/* QR */
-.qr-container {
-  text-align: center;
-  padding: 10px 0;
-}
-
-.qr-container img {
-  width: 180px;
-  height: 180px;
-  border-radius: 16px;
-  margin: 16px auto;
-  display: block;
-  box-shadow: var(--shadow-card);
-}
-
-.qr-label {
-  font-size: 14px;
-  color: var(--text-secondary);
-  margin-top: 6px;
-}
 
 /* Modal title */
 .modal-title {
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: -0.4px;
+  font-family: var(--font-display);
+  font-size: 22px; letter-spacing: -0.4px;
   margin-bottom: 4px;
 }
+.modal-subtitle { font-size: 14px; color: var(--text-2); margin-bottom: 16px; }
 
-.modal-subtitle {
-  font-size: 14px;
-  color: var(--text-secondary);
-  margin-bottom: 16px;
+/* Cart items */
+.cart-item-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
 }
-
-/* Divider */
-.divider { height: 0.5px; background: var(--border); margin: 4px 0 16px; }
-
-/* Bounce anim for cart add */
-@keyframes cartBounce {
-  0% { transform: translateX(-50%) translateY(0) scale(1); }
-  40% { transform: translateX(-50%) translateY(-6px) scale(1.04); }
-  70% { transform: translateX(-50%) translateY(2px) scale(0.98); }
-  100% { transform: translateX(-50%) translateY(0) scale(1); }
+.cart-item-img {
+  width: 52px; height: 52px;
+  border-radius: var(--r-sm); object-fit: cover;
+  background: var(--bg); flex-shrink: 0;
 }
+.cart-item-img-placeholder {
+  width: 52px; height: 52px;
+  border-radius: var(--r-sm);
+  background: var(--bg); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+}
+.cart-item-info { flex: 1; min-width: 0; }
+.cart-item-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+.cart-item-price { font-size: 13px; color: var(--text-2); }
+.cart-item-controls {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--bg); border-radius: 10px; padding: 3px;
+}
+.cart-ctrl-btn {
+  width: 28px; height: 28px;
+  border-radius: 7px; background: white;
+  border: none; font-size: 16px;
+  font-family: var(--font-body); cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.1s; color: var(--text);
+}
+.cart-ctrl-btn:active { transform: scale(0.85); }
+.cart-ctrl-num { font-size: 14px; font-weight: 700; min-width: 18px; text-align: center; }
 
-.cart-bar.bounce { animation: cartBounce 0.35s ease; }
+.total-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 0 4px;
+}
+.total-label { font-size: 15px; font-weight: 500; color: var(--text-2); }
+.total-amount { font-size: 24px; font-weight: 700; letter-spacing: -0.6px; }
 
-/* Section hidden */
-.section.hidden { display: none; }
+/* Payment */
+.pay-options {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 8px; margin-bottom: 16px;
+}
+.pay-btn {
+  height: 60px; border: none; border-radius: var(--r);
+  background: var(--bg); font-family: var(--font-body);
+  font-size: 14px; font-weight: 600; cursor: pointer;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 4px;
+  transition: transform 0.15s, background 0.15s; color: var(--text);
+  border: 1px solid var(--border);
+}
+.pay-btn:active { transform: scale(0.95); }
+.pay-btn .pay-icon { font-size: 20px; }
+.pay-btn.apple  { background: #1C1C1E; color: white; border-color: transparent; }
+.pay-btn.google { background: white; }
+
+/* Input fields */
+.input-field {
+  width: 100%; padding: 0 14px; height: 50px;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--r-sm); font-size: 15px;
+  font-family: var(--font-body); color: var(--text);
+  margin-bottom: 10px; outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.input-field:focus {
+  border-color: rgba(200,65,10,0.4);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.input-field::placeholder { color: var(--text-3); }
+
+/* Checkboxes for payment consent */
+.consent-block { margin: 4px 0 14px; }
+.consent-row {
+  display: flex; align-items: flex-start; gap: 10px;
+  margin-bottom: 10px;
+}
+.consent-row input[type="checkbox"] {
+  width: 18px; height: 18px;
+  accent-color: var(--accent);
+  margin-top: 2px; flex-shrink: 0; cursor: pointer;
+}
+.consent-label {
+  font-size: 13px; line-height: 1.4; color: var(--text-2);
+}
+.consent-label a {
+  color: var(--accent); text-decoration: underline; cursor: pointer;
+}
+.consent-required { font-size: 11px; color: var(--text-3); }
 
 /* Success */
 .success-icon {
-  width: 72px;
-  height: 72px;
-  background: #34C759;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 36px;
-  margin: 20px auto;
+  width: 72px; height: 72px;
+  background: #27AE60; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px; margin: 20px auto 16px;
 }
-
 .success-title {
   text-align: center;
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-  margin-bottom: 6px;
+  font-family: var(--font-display);
+  font-size: 24px; letter-spacing: -0.5px; margin-bottom: 6px;
 }
-
-.success-sub {
-  text-align: center;
-  color: var(--text-secondary);
-  font-size: 15px;
-  margin-bottom: 24px;
-}
+.success-sub { text-align: center; color: var(--text-2); font-size: 15px; margin-bottom: 24px; }
+.success-table { text-align: center; font-size: 13px; color: var(--text-3); margin-bottom: 20px; }
 
 /* Empty cart */
 .empty-cart {
-  text-align: center;
-  padding: 30px 0 10px;
-  color: var(--text-secondary);
-  font-size: 15px;
+  text-align: center; padding: 30px 0 10px;
+  color: var(--text-2); font-size: 15px;
 }
+.empty-cart .icon { font-size: 48px; margin-bottom: 10px; }
 
-.empty-cart .icon { font-size: 44px; margin-bottom: 10px; }
+/* Privacy modal content */
+.privacy-content { font-size: 14px; color: var(--text-2); line-height: 1.6; }
+.privacy-content h3 {
+  font-family: var(--font-display);
+  font-size: 18px; color: var(--text);
+  margin: 16px 0 6px;
+}
+.privacy-content p { margin-bottom: 10px; }
 </style>
 </head>
 
 <body>
 
-<div class="header">
-  <div class="header-top">
-    <h1>Ēdienkarte</h1>
-    <div class="header-badge" id="headerCart" onclick="openCartModal()" style="display:none">
-      🛒 Grozs <span class="cart-count" id="headerCartCount">0</span>
+<!-- ═══════════════════════════════════════════════════
+     COOKIE CONSENT BANNER
+═══════════════════════════════════════════════════ -->
+<div id="cookieBanner">
+  <div class="cookie-title" id="ck-title">Sīkdatnes un privātums</div>
+  <p class="cookie-text" id="ck-text">
+    Mēs izmantojam nepieciešamās sīkdatnes pasūtījumu apstrādei. Ar jūsu piekrišanu mēs varam arī nosūtīt jums mārketinga ziņas.
+    <a onclick="openPrivacyModal()">Privātuma politika</a>
+  </p>
+  <div class="cookie-toggles">
+    <div class="cookie-toggle-row">
+      <input type="checkbox" id="ckNecessary" checked disabled>
+      <label class="cookie-toggle-label" for="ckNecessary">
+        <strong id="ck-necessary-label">Nepieciešamās</strong>
+        <span id="ck-necessary-desc">Pasūtījumu apstrāde, maksājumi. Vienmēr aktīvas.</span>
+      </label>
+    </div>
+    <div class="cookie-toggle-row">
+      <input type="checkbox" id="ckMarketing">
+      <label class="cookie-toggle-label" for="ckMarketing">
+        <strong id="ck-marketing-label">Mārketings</strong>
+        <span id="ck-marketing-desc">Informatīvi piedāvājumi un jaunumi no mums.</span>
+      </label>
     </div>
   </div>
-  <div class="cat-scroll" id="catPills"></div>
+  <div class="cookie-actions">
+    <button class="cookie-btn cookie-btn-secondary" onclick="acceptSelected()" id="ck-btn-selected">Tikai nepieciešamās</button>
+    <button class="cookie-btn cookie-btn-primary" onclick="acceptAll()" id="ck-btn-all">Piekrist visam</button>
+  </div>
 </div>
 
-<div class="content" id="content"></div>
+<!-- ═══════════════════════════════════════════════════
+     HEADER
+═══════════════════════════════════════════════════ -->
+<header class="header">
+  <div class="header-top">
+    <div class="header-brand">
+      <span class="header-brand-name">Grill In</span>
+      <div class="header-brand-dot"></div>
+    </div>
+    <div class="header-right">
+      <div class="lang-switch" role="group" aria-label="Valodas izvēle">
+        <button class="lang-btn active" onclick="setLang('lv')" id="lang-lv">LV</button>
+        <button class="lang-btn" onclick="setLang('ru')" id="lang-ru">RU</button>
+        <button class="lang-btn" onclick="setLang('en')" id="lang-en">EN</button>
+      </div>
+      <button class="header-cart-btn" id="headerCart" onclick="openCartModal()">
+        🛒 <span class="header-cart-count" id="headerCartCount">0</span>
+      </button>
+    </div>
+  </div>
+  <div class="table-chip" id="tableChip">
+    🪑 <span id="tableLabel">Galdiņš</span>: <span id="tableNum">—</span>
+  </div>
+  <div class="cat-scroll" id="catPills" role="navigation" aria-label="Kategorijas"></div>
+</header>
 
-<div class="cart-bar" id="cartBar" onclick="openCartModal()">
-  <span class="cart-bar-left" id="cartBarCount">0</span>
-  <span class="cart-bar-mid">Skatīt grozu</span>
-  <span class="cart-bar-right" id="cartBarTotal">0.00 €</span>
-</div>
+<!-- ═══════════════════════════════════════════════════
+     MAIN CONTENT
+═══════════════════════════════════════════════════ -->
+<main class="content" id="content"></main>
 
-<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+<!-- ═══════════════════════════════════════════════════
+     CART BAR
+═══════════════════════════════════════════════════ -->
+<button class="cart-bar" id="cartBar" onclick="openCartModal()" aria-label="Atvērt grozu">
+  <span class="cart-bar-badge" id="cartBarCount">0</span>
+  <span class="cart-bar-label" id="cartBarLabel">Skatīt grozu</span>
+  <span class="cart-bar-total" id="cartBarTotal">0.00 €</span>
+</button>
+
+<!-- ═══════════════════════════════════════════════════
+     MODAL
+═══════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)" role="dialog" aria-modal="true">
   <div class="modal-sheet" id="modalSheet">
     <div class="modal-handle"></div>
     <div class="modal-body" id="modalBody"></div>
   </div>
 </div>
 
+
 <script>
+/* ═══════════════════════════════════════════════════════
+   TABLE NUMBER
+   — Backend: read ?table= param from QR URL
+   — Example QR URL: https://grillin.lv/menu?table=5
+═══════════════════════════════════════════════════════ */
+const TABLE_NUMBER = (() => {
+  const p = new URLSearchParams(window.location.search);
+  return p.get('table') || '—';
+})();
 
-// ── DATA ──────────────────────────────────────────────────────────────────────
-const EMOJI = {"Dienas zupa":"🍲","Gaļas ēdieni":"🥩","Salāti":"🥗","Uzkodas":"🍟","Mērces":"🫙","Dzērieni":"🥤"};
+/* ═══════════════════════════════════════════════════════
+   LANGUAGE SYSTEM
+   Current language drives all visible text.
+   Kitchen/order output is always Latvian (LV).
+═══════════════════════════════════════════════════════ */
+let lang = localStorage.getItem('lang') || 'lv';
 
-const data = {
-  "Dienas zupa": [
-    { name:"Tomātu zupa", price:4, desc:"Ar baziliku", img:"https://ik.imagekit.io/erewhile/Grill%20Bar/IMG_0335.JPG" }
-  ],
-  "Gaļas ēdieni": [
-    { name:"Cūkgaļas šašliks", price:10, desc:"Ar piedevām", img:"https://ik.imagekit.io/erewhile/Grill%20Bar/IMG_0332.JPG" },
-    { name:"Vistas šašliks", price:9, desc:"Maigs un sulīgs", img:"https://ik.imagekit.io/erewhile/Grill%20Bar/Screenshot%20at%20Apr%2016%2014-21-35.png" }
-  ],
-  "Salāti": [
-    { name:"Cēzara salāti", price:7, desc:"Ar vistu", img:"https://ik.imagekit.io/erewhile/Grill%20Bar/Screenshot%20at%20Apr%2016%2014-20-32.png" }
-  ],
-  "Uzkodas": [
-    { name:"Frī kartupeļi", price:4, desc:"Kraukšķīgi", img:"https://ik.imagekit.io/erewhile/Grill%20Bar/IMG_0336.JPG" },
-    { name:"Grilēti dārzeņi", price:5, desc:"Sezonas dārzeņi" }
-  ],
-  "Mērces": [
-    { name:"Ķiploku mērce", price:1, desc:"Krēmīga", img:"https://ik.imagekit.io/erewhile/Grill%20Bar/Screenshot%20at%20Apr%2016%2014-21-07.png" },
-    { name:"BBQ mērce", price:1, desc:"Saldena" }
-  ],
-  "Dzērieni": [
-    { name:"Kola", price:2, desc:"Auksta" },
-    { name:"Ūdens", price:1, desc:"Negāzēts" }
-  ]
+const T = {
+  lv: {
+    menuTitle:       'Ēdienkarte',
+    tableLabel:      'Galdiņš',
+    cartLabel:       'Skatīt grozu',
+    cartTitle:       'Grozs',
+    cartEmpty:       'Grozs ir tukšs',
+    quantity:        'Daudzums',
+    addToCart:       'Pievienot grozam',
+    close:           'Aizvērt',
+    continueShopping:'Turpināt iepirkties',
+    toPayment:       'Turpināt uz apmaksu',
+    paymentTitle:    'Apmaksa',
+    total:           'Kopā',
+    applePay:        'Apple Pay',
+    googlePay:       'Google Pay',
+    card:            'Karte',
+    emailPlaceholder:'E-pasts (kvīts)',
+    consentEmail:    'Piekrītu sniegt savu e-pastu rēķina saņemšanai.',
+    consentMarketing:'Vēlos saņemt jaunumus un piedāvājumus no Grill In.',
+    confirmOrder:    'Apstiprināt pasūtījumu',
+    back:            '← Atpakaļ',
+    successTitle:    'Pasūtījums pieņemts!',
+    successSub:      'Jūsu ēdiens tiek gatavots. Paldies!',
+    successTable:    'Mēs atnesīsim uz galdiņu',
+    newOrder:        'Jauns pasūtījums',
+    privacyTitle:    'Privātuma politika',
+    required:        '* Nepieciešams',
+    ckTitle:         'Sīkdatnes un privātums',
+    ckText:          'Mēs izmantojam nepieciešamās sīkdatnes pasūtījumu apstrādei. Ar jūsu piekrišanu mēs varam arī nosūtīt jums mārketinga ziņas.',
+    ckNecLabel:      'Nepieciešamās',
+    ckNecDesc:       'Pasūtījumu apstrāde, maksājumi. Vienmēr aktīvas.',
+    ckMktLabel:      'Mārketings',
+    ckMktDesc:       'Informatīvi piedāvājumi un jaunumi no mums.',
+    ckBtnSelected:   'Tikai nepieciešamās',
+    ckBtnAll:        'Piekrist visam',
+  },
+  ru: {
+    menuTitle:       'Меню',
+    tableLabel:      'Столик',
+    cartLabel:       'Посмотреть корзину',
+    cartTitle:       'Корзина',
+    cartEmpty:       'Корзина пуста',
+    quantity:        'Количество',
+    addToCart:       'Добавить в корзину',
+    close:           'Закрыть',
+    continueShopping:'Продолжить выбор',
+    toPayment:       'Перейти к оплате',
+    paymentTitle:    'Оплата',
+    total:           'Итого',
+    applePay:        'Apple Pay',
+    googlePay:       'Google Pay',
+    card:            'Карта',
+    emailPlaceholder:'E-mail (чек)',
+    consentEmail:    'Согласен передать свой e-mail для получения чека.',
+    consentMarketing:'Хочу получать новости и предложения от Grill In.',
+    confirmOrder:    'Подтвердить заказ',
+    back:            '← Назад',
+    successTitle:    'Заказ принят!',
+    successSub:      'Ваш заказ готовится. Спасибо!',
+    successTable:    'Принесём на столик',
+    newOrder:        'Новый заказ',
+    privacyTitle:    'Политика конфиденциальности',
+    required:        '* Обязательно',
+    ckTitle:         'Файлы cookie и конфиденциальность',
+    ckText:          'Мы используем необходимые файлы cookie для обработки заказов. С вашего согласия мы можем также отправлять вам маркетинговые сообщения.',
+    ckNecLabel:      'Необходимые',
+    ckNecDesc:       'Обработка заказов и платежей. Всегда активны.',
+    ckMktLabel:      'Маркетинг',
+    ckMktDesc:       'Информационные предложения и новости от нас.',
+    ckBtnSelected:   'Только необходимые',
+    ckBtnAll:        'Принять все',
+  },
+  en: {
+    menuTitle:       'Menu',
+    tableLabel:      'Table',
+    cartLabel:       'View cart',
+    cartTitle:       'Cart',
+    cartEmpty:       'Cart is empty',
+    quantity:        'Quantity',
+    addToCart:       'Add to cart',
+    close:           'Close',
+    continueShopping:'Continue browsing',
+    toPayment:       'Proceed to payment',
+    paymentTitle:    'Payment',
+    total:           'Total',
+    applePay:        'Apple Pay',
+    googlePay:       'Google Pay',
+    card:            'Card',
+    emailPlaceholder:'Email (receipt)',
+    consentEmail:    'I agree to provide my email to receive the invoice.',
+    consentMarketing:'I would like to receive news and offers from Grill In.',
+    confirmOrder:    'Confirm order',
+    back:            '← Back',
+    successTitle:    'Order received!',
+    successSub:      'Your food is being prepared. Thank you!',
+    successTable:    "We'll bring it to table",
+    newOrder:        'New order',
+    privacyTitle:    'Privacy Policy',
+    required:        '* Required',
+    ckTitle:         'Cookies & Privacy',
+    ckText:          'We use necessary cookies to process orders. With your consent, we may also send you marketing messages.',
+    ckNecLabel:      'Necessary',
+    ckNecDesc:       'Order processing and payments. Always active.',
+    ckMktLabel:      'Marketing',
+    ckMktDesc:       'Promotional offers and news from us.',
+    ckBtnSelected:   'Necessary only',
+    ckBtnAll:        'Accept all',
+  }
 };
 
-let cart = [];
+function t(key) { return (T[lang] || T['lv'])[key] || key; }
+
+function setLang(l) {
+  lang = l;
+  localStorage.setItem('lang', l);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('lang-' + l).classList.add('active');
+  applyLangUI();
+  // Re-render pills and sections with translated names
+  document.getElementById('catPills').innerHTML = '';
+  document.getElementById('content').innerHTML = '';
+  render();
+}
+
+function applyLangUI() {
+  document.getElementById('tableLabel').textContent = t('tableLabel');
+  document.getElementById('cartBarLabel').textContent = t('cartLabel');
+  document.getElementById('ck-title').textContent = t('ckTitle');
+  document.getElementById('ck-text').innerHTML = t('ckText') + ' <a onclick="openPrivacyModal()">Privātuma politika</a>';
+  document.getElementById('ck-necessary-label').textContent = t('ckNecLabel');
+  document.getElementById('ck-necessary-desc').textContent = t('ckNecDesc');
+  document.getElementById('ck-marketing-label').textContent = t('ckMktLabel');
+  document.getElementById('ck-marketing-desc').textContent = t('ckMktDesc');
+  document.getElementById('ck-btn-selected').textContent = t('ckBtnSelected');
+  document.getElementById('ck-btn-all').textContent = t('ckBtnAll');
+  document.title = 'Grill In — ' + t('menuTitle');
+}
+
+
+/* ═══════════════════════════════════════════════════════
+   MENU DATA
+   ───────────────────────────────────────────────────
+   BACKEND INTEGRATION NOTES:
+   • Replace this static `MENU_DATA` object with a fetch()
+     call to your API endpoint, e.g.:
+       const MENU_DATA = await fetch('/api/menu?lang=lv').then(r => r.json());
+   • Each item MUST have a unique `id` (UUID or integer).
+   • `img` can be null — the frontend shows a placeholder emoji.
+   • `available` = false hides the Add button (shows "grayed out").
+   • `nameLv` is ALWAYS used for kitchen orders, regardless of UI language.
+   • Category keys below map to `data-category` attributes on DOM sections.
+   • Prices are in EUR (float).
+   ───────────────────────────────────────────────────
+   CATEGORY IDs (stable keys for API):
+     salati | zupas | uzkodas | grils | garnirs |
+     deserts | kokteili | kafija | teja |
+     alkohols | dvoretskiy | grabngo
+═══════════════════════════════════════════════════════ */
+const MENU_DATA = {
+
+  /* ── САЛАТЫ / SALĀTI (до 3) ── */
+  salati: {
+    emoji: '🥗',
+    nameLv: 'Salāti',
+    nameRu: 'Салаты',
+    nameEn: 'Salads',
+    items: [
+      // PLACEHOLDER — replace with real items from CMS
+      // { id: 'sal-001', nameLv: 'Cēzara salāti', nameRu: 'Салат Цезарь', nameEn: 'Caesar Salad',
+      //   descLv: 'Ar vistu un parmezānu', descRu: 'С курицей и пармезаном', descEn: 'With chicken and parmesan',
+      //   price: 8.50, img: null, available: true, tags: [] }
+    ],
+    maxItems: 3
+  },
+
+  /* ── СУПЫ / ZUPAS (до 2) ── */
+  zupas: {
+    emoji: '🍲',
+    nameLv: 'Zupas',
+    nameRu: 'Супы',
+    nameEn: 'Soups',
+    items: [],
+    maxItems: 2
+  },
+
+  /* ── ЗАКУСКИ / UZKODAS (до 5) ── */
+  uzkodas: {
+    emoji: '🍟',
+    nameLv: 'Uzkodas',
+    nameRu: 'Закуски',
+    nameEn: 'Starters',
+    items: [],
+    maxItems: 5
+  },
+
+  /* ── ГРИЛЬ / GRILS (до 10) ── */
+  grils: {
+    emoji: '🔥',
+    nameLv: 'No grila',
+    nameRu: 'С гриля',
+    nameEn: 'From the Grill',
+    items: [],
+    maxItems: 10
+  },
+
+  /* ── ГАРНИРЫ / GARNIRS (до 5) ── */
+  garnirs: {
+    emoji: '🥔',
+    nameLv: 'Piedevas',
+    nameRu: 'Гарниры',
+    nameEn: 'Sides',
+    items: [],
+    maxItems: 5
+  },
+
+  /* ── ДЕСЕРТЫ / DESERTS (до 5) ── */
+  deserts: {
+    emoji: '🍮',
+    nameLv: 'Deserti',
+    nameRu: 'Десерты',
+    nameEn: 'Desserts',
+    items: [],
+    maxItems: 5
+  },
+
+  /* ── МОЛОЧНЫЕ КОКТЕЙЛИ / KOKTEILI (2) ── */
+  kokteili: {
+    emoji: '🥤',
+    nameLv: 'Piena kokteili',
+    nameRu: 'Молочные коктейли',
+    nameEn: 'Milkshakes',
+    items: [],
+    maxItems: 2
+  },
+
+  /* ── КОФЕ / KAFIJA ── */
+  kafija: {
+    emoji: '☕',
+    nameLv: 'Kafija',
+    nameRu: 'Кофе',
+    nameEn: 'Coffee',
+    items: [],
+    maxItems: 10
+  },
+
+  /* ── ЧАЙ / TEJA ── */
+  teja: {
+    emoji: '🍵',
+    nameLv: 'Tēja',
+    nameRu: 'Чай',
+    nameEn: 'Tea',
+    items: [],
+    maxItems: 10
+  },
+
+  /* ── АЛКОГОЛЬНЫЕ КОКТЕЙЛИ (до 5) ── */
+  alkohols: {
+    emoji: '🍹',
+    nameLv: 'Alkoholiskie kokteiļi',
+    nameRu: 'Алкогольные коктейли',
+    nameEn: 'Cocktails',
+    items: [],
+    maxItems: 5
+  },
+
+  /* ── DVORETSKIY (бутылочные напитки, бренд) ── */
+  dvoretskiy: {
+    emoji: '🍶',
+    nameLv: 'Dvoretskiy',
+    nameRu: 'Dvoretskiy',
+    nameEn: 'Dvoretskiy',
+    items: [],
+    maxItems: 15
+  },
+
+  /* ── GRAB & GO (квас, соки, содовая — 8 позиций) ── */
+  grabngo: {
+    emoji: '🥫',
+    nameLv: 'Grab & Go',
+    nameRu: 'Grab & Go',
+    nameEn: 'Grab & Go',
+    items: [],
+    maxItems: 8
+  }
+};
+
+/* ═══════════════════════════════════════════════════════
+   EMOJI MAP (by category id)
+═══════════════════════════════════════════════════════ */
+const EMOJI = Object.fromEntries(
+  Object.entries(MENU_DATA).map(([k, v]) => [k, v.emoji])
+);
+
+/* helper: get category id of an item */
+function getCatIdOf(item) {
+  return Object.keys(MENU_DATA).find(k => MENU_DATA[k].items.includes(item));
+}
+
+/* helper: localised name of item */
+function itemName(item) {
+  if (lang === 'ru' && item.nameRu) return item.nameRu;
+  if (lang === 'en' && item.nameEn) return item.nameEn;
+  return item.nameLv;
+}
+
+/* helper: localised description */
+function itemDesc(item) {
+  if (lang === 'ru' && item.descRu) return item.descRu;
+  if (lang === 'en' && item.descEn) return item.descEn;
+  return item.descLv || '';
+}
+
+/* helper: localised category name */
+function catName(catId) {
+  const c = MENU_DATA[catId];
+  if (!c) return catId;
+  if (lang === 'ru') return c.nameRu;
+  if (lang === 'en') return c.nameEn;
+  return c.nameLv;
+}
+
+/* ═══════════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════════ */
+let cart = [];          // [{ item, qty }]
 let currentItem = null;
-let currentQty = 1;
-let modalMode = null; // 'item' | 'cart' | 'payment' | 'cash'
+let currentQty  = 1;
+let modalMode   = null; // 'item' | 'cart' | 'payment' | 'privacy'
 
-// ── RENDER ────────────────────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   RENDER
+═══════════════════════════════════════════════════════ */
 function render() {
-  const content = document.getElementById("content");
-  const pills = document.getElementById("catPills");
+  const content = document.getElementById('content');
+  const pills   = document.getElementById('catPills');
 
-  Object.keys(data).forEach((cat, ci) => {
-    // pill
-    const pill = document.createElement("div");
-    pill.className = "cat-pill" + (ci === 0 ? " active" : "");
-    pill.textContent = EMOJI[cat] + " " + cat;
-    pill.dataset.cat = cat;
-    pill.onclick = () => scrollToSection(cat, pill);
+  // Table number
+  document.getElementById('tableNum').textContent = TABLE_NUMBER;
+
+  Object.keys(MENU_DATA).forEach((catId, ci) => {
+    const cat = MENU_DATA[catId];
+
+    // Category pill
+    const pill = document.createElement('button');
+    pill.className = 'cat-pill' + (ci === 0 ? ' active' : '');
+    pill.textContent = cat.emoji + ' ' + catName(catId);
+    pill.dataset.cat = catId;
+    pill.onclick = () => scrollToSection(catId, pill);
     pills.appendChild(pill);
 
-    // section
-    const sec = document.createElement("div");
-    sec.className = "section";
-    sec.id = "sec-" + cat;
+    // Section
+    const sec = document.createElement('section');
+    sec.className = 'section';
+    sec.id = 'sec-' + catId;
+    sec.dataset.category = catId;
 
-    const title = document.createElement("div");
-    title.className = "section-title";
-    title.textContent = cat;
-    sec.appendChild(title);
+    const hdr = document.createElement('div');
+    hdr.className = 'section-header';
+    hdr.innerHTML = `
+      <h2 class="section-title">${cat.emoji} ${catName(catId)}</h2>
+      <span class="section-count">${cat.items.length} / ${cat.maxItems}</span>
+    `;
+    sec.appendChild(hdr);
 
-    data[cat].forEach(item => {
-      sec.appendChild(makeCard(item));
-    });
+    if (cat.items.length === 0) {
+      // Show placeholder slots up to maxItems
+      const placeholderCount = Math.min(cat.maxItems, 3); // show up to 3 skeleton placeholders
+      for (let i = 0; i < placeholderCount; i++) {
+        sec.appendChild(makePlaceholderCard(catId, i + 1));
+      }
+    } else {
+      cat.items.forEach(item => sec.appendChild(makeCard(item, catId)));
+    }
 
     content.appendChild(sec);
   });
 
-  // scroll spy
-  window.addEventListener("scroll", updateActivePill, { passive: true });
+  window.addEventListener('scroll', updateActivePill, { passive: true });
 }
 
-function makeCard(item) {
-  const card = document.createElement("div");
-  card.className = "card";
-  card.onclick = () => openItemModal(item);
+/* Real item card */
+function makeCard(item, catId) {
+  const card = document.createElement('div');
+  card.className = 'card' + (item.available === false ? ' unavailable' : '');
+  /* data-item-id for backend hooking */
+  card.dataset.itemId = item.id;
+  card.dataset.category = catId;
 
-  const imgEl = item.img
-    ? `<img class="card-img" src="${item.img}" alt="${item.name}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+  const emoji = EMOJI[catId] || '🍽';
+  const imgHtml = item.img
+    ? `<img class="card-img" src="${item.img}" alt="${item.nameLv}" loading="lazy"
+         onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
     : '';
-  const placeholder = `<div class="card-img-placeholder" style="${item.img ? 'display:none' : ''}">${EMOJI[getCatOf(item)] || '🍽'}</div>`;
+  const placeholder = `<div class="card-img-placeholder" style="${item.img ? 'display:none' : ''}">${emoji}</div>`;
+
+  const addBtn = item.available !== false
+    ? `<button class="card-add" aria-label="Pievienot">+</button>`
+    : `<button class="card-add" style="background:var(--border-med)" disabled>−</button>`;
 
   card.innerHTML = `
-    ${imgEl}${placeholder}
+    ${imgHtml}${placeholder}
     <div class="card-body">
-      <div class="card-name">${item.name}</div>
-      <div class="card-desc">${item.desc}</div>
-      <div class="card-price">${item.price.toFixed(2)} €</div>
+      <div class="card-name">${itemName(item)}</div>
+      <div class="card-desc">${itemDesc(item)}</div>
+      <div class="card-price">${item.price ? item.price.toFixed(2) + ' €' : ''}</div>
     </div>
-    <div class="card-add">+</div>
+    ${addBtn}
+  `;
+
+  if (item.available !== false) {
+    card.onclick = () => openItemModal(item, catId);
+  }
+
+  return card;
+}
+
+/* Placeholder card — shown until CMS content is loaded */
+function makePlaceholderCard(catId, index) {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.style.opacity = '0.4';
+  card.style.pointerEvents = 'none';
+  /* data-placeholder for backend: replace with real item cards */
+  card.dataset.placeholder = `${catId}-${index}`;
+
+  const emoji = EMOJI[catId] || '🍽';
+
+  card.innerHTML = `
+    <div class="card-img-placeholder">${emoji}</div>
+    <div class="card-body">
+      <div class="card-name" style="background:#DDDBD7;color:transparent;border-radius:6px;width:70%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+      <div class="card-desc" style="background:#E8E6E2;color:transparent;border-radius:5px;width:50%;margin-top:6px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+      <div class="card-price" style="background:#E8E6E2;color:transparent;border-radius:5px;width:30%;margin-top:8px">&nbsp;&nbsp;&nbsp;</div>
+    </div>
+    <div class="card-add" style="background:var(--border-med)">+</div>
   `;
   return card;
 }
 
-function getCatOf(item) {
-  return Object.keys(data).find(cat => data[cat].includes(item));
-}
-
-// ── SCROLL SPY ────────────────────────────────────────────────────────────────
-function scrollToSection(cat, pill) {
-  const sec = document.getElementById("sec-" + cat);
+/* ═══════════════════════════════════════════════════════
+   SCROLL SPY
+═══════════════════════════════════════════════════════ */
+function scrollToSection(catId, pill) {
+  const sec = document.getElementById('sec-' + catId);
   if (!sec) return;
-  const top = sec.getBoundingClientRect().top + window.scrollY - 90;
-  window.scrollTo({ top, behavior: "smooth" });
-
-  document.querySelectorAll(".cat-pill").forEach(p => p.classList.remove("active"));
-  pill.classList.add("active");
-  pill.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+  const top = sec.getBoundingClientRect().top + window.scrollY - 110;
+  window.scrollTo({ top, behavior: 'smooth' });
+  document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+  pill.classList.add('active');
+  pill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
 }
 
 function updateActivePill() {
-  const sections = Object.keys(data).map(cat => ({
-    cat,
-    el: document.getElementById("sec-" + cat)
-  }));
+  const sections = Object.keys(MENU_DATA).map(cat => ({
+    cat, el: document.getElementById('sec-' + cat)
+  })).filter(s => s.el);
 
-  let active = sections[0].cat;
+  let active = sections[0]?.cat;
   for (const { cat, el } of sections) {
-    const rect = el.getBoundingClientRect();
-    if (rect.top <= 100) active = cat;
+    if (el.getBoundingClientRect().top <= 120) active = cat;
   }
 
-  document.querySelectorAll(".cat-pill").forEach(p => {
+  document.querySelectorAll('.cat-pill').forEach(p => {
     const isActive = p.dataset.cat === active;
-    p.classList.toggle("active", isActive);
-    if (isActive) p.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+    p.classList.toggle('active', isActive);
+    if (isActive) p.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
   });
 }
 
-// ── ITEM MODAL ────────────────────────────────────────────────────────────────
-function openItemModal(item) {
+/* ═══════════════════════════════════════════════════════
+   ITEM MODAL
+═══════════════════════════════════════════════════════ */
+function openItemModal(item, catId) {
   currentItem = item;
-  currentQty = 1;
-  modalMode = 'item';
+  currentQty  = 1;
+  modalMode   = 'item';
 
-  const body = document.getElementById("modalBody");
-  const emoji = EMOJI[getCatOf(item)] || '🍽';
+  const body  = document.getElementById('modalBody');
+  const emoji = EMOJI[catId] || '🍽';
 
   const imgHtml = item.img
-    ? `<img class="item-modal-img" src="${item.img}" alt="${item.name}" onerror="this.outerHTML='<div class=\\'item-modal-img-placeholder\\'>${emoji}</div>'">`
+    ? `<img class="item-modal-img" src="${item.img}" alt="${item.nameLv}"
+         onerror="this.outerHTML='<div class=\\'item-modal-img-placeholder\\'>${emoji}</div>'">`
     : `<div class="item-modal-img-placeholder">${emoji}</div>`;
 
   body.innerHTML = `
     ${imgHtml}
-    <div class="item-modal-name">${item.name}</div>
-    <div class="item-modal-desc">${item.desc}</div>
+    <div class="item-modal-name">${itemName(item)}</div>
+    <div class="item-modal-desc">${itemDesc(item)}</div>
     <div class="divider"></div>
     <div class="qty-row">
-      <span class="qty-label">Daudzums</span>
+      <span class="qty-label">${t('quantity')}</span>
       <div class="qty-controls">
         <button class="qty-btn" onclick="changeQty(-1)">−</button>
         <span class="qty-num" id="qtyNum">1</span>
@@ -879,10 +1279,10 @@ function openItemModal(item) {
       </div>
     </div>
     <button class="btn-primary" id="addBtn" onclick="addToCart()">
-      <span>Pievienot grozam</span>
+      <span>${t('addToCart')}</span>
       <span id="addBtnPrice">${item.price.toFixed(2)} €</span>
     </button>
-    <button class="btn-secondary" onclick="closeModal()">Aizvērt</button>
+    <button class="btn-secondary" onclick="closeModal()">${t('close')}</button>
   `;
 
   openModal();
@@ -890,8 +1290,9 @@ function openItemModal(item) {
 
 function changeQty(delta) {
   currentQty = Math.max(1, currentQty + delta);
-  document.getElementById("qtyNum").textContent = currentQty;
-  document.getElementById("addBtnPrice").textContent = (currentItem.price * currentQty).toFixed(2) + " €";
+  document.getElementById('qtyNum').textContent = currentQty;
+  document.getElementById('addBtnPrice').textContent =
+    (currentItem.price * currentQty).toFixed(2) + ' €';
 }
 
 function addToCart() {
@@ -905,7 +1306,9 @@ function addToCart() {
   closeModal();
 }
 
-// ── CART MODAL ────────────────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   CART MODAL
+═══════════════════════════════════════════════════════ */
 function openCartModal() {
   modalMode = 'cart';
   renderCartModal();
@@ -913,16 +1316,16 @@ function openCartModal() {
 }
 
 function renderCartModal() {
-  const body = document.getElementById("modalBody");
+  const body = document.getElementById('modalBody');
 
   if (cart.length === 0) {
     body.innerHTML = `
-      <div class="modal-title">Grozs</div>
+      <div class="modal-title">${t('cartTitle')}</div>
       <div class="empty-cart">
         <div class="icon">🛒</div>
-        Grozs ir tukšs
+        ${t('cartEmpty')}
       </div>
-      <button class="btn-secondary" onclick="closeModal()">Aizvērt</button>
+      <button class="btn-secondary" onclick="closeModal()">${t('close')}</button>
     `;
     return;
   }
@@ -931,16 +1334,18 @@ function renderCartModal() {
   let itemsHtml = '';
 
   cart.forEach((entry, idx) => {
-    const emoji = EMOJI[getCatOf(entry.item)] || '🍽';
+    const catId  = getCatIdOf(entry.item) || 'grils';
+    const emoji  = EMOJI[catId] || '🍽';
     const imgHtml = entry.item.img
-      ? `<img class="cart-item-img" src="${entry.item.img}" alt="${entry.item.name}" onerror="this.outerHTML='<div class=\\'cart-item-img-placeholder\\'>${emoji}</div>'">`
+      ? `<img class="cart-item-img" src="${entry.item.img}" alt="${entry.item.nameLv}"
+           onerror="this.outerHTML='<div class=\\'cart-item-img-placeholder\\'>${emoji}</div>'">`
       : `<div class="cart-item-img-placeholder">${emoji}</div>`;
 
     itemsHtml += `
       <div class="cart-item-row" id="ci-${idx}">
         ${imgHtml}
         <div class="cart-item-info">
-          <div class="cart-item-name">${entry.item.name}</div>
+          <div class="cart-item-name">${itemName(entry.item)}</div>
           <div class="cart-item-price">${entry.item.price.toFixed(2)} €</div>
         </div>
         <div class="cart-item-controls">
@@ -953,17 +1358,17 @@ function renderCartModal() {
   });
 
   body.innerHTML = `
-    <div class="modal-title">Grozs</div>
+    <div class="modal-title">${t('cartTitle')}</div>
     <div id="cart-items-list">${itemsHtml}</div>
     <div class="total-row">
-      <span class="total-label">Kopā</span>
+      <span class="total-label">${t('total')}</span>
       <span class="total-amount" id="cartTotal">${total.toFixed(2)} €</span>
     </div>
     <button class="btn-primary" onclick="openPayment()">
-      <span>Turpināt uz apmaksu</span>
+      <span>${t('toPayment')}</span>
       <span>${total.toFixed(2)} €</span>
     </button>
-    <button class="btn-secondary" onclick="closeModal()">Turpināt iepirkties</button>
+    <button class="btn-secondary" onclick="closeModal()">${t('continueShopping')}</button>
   `;
 }
 
@@ -975,78 +1380,136 @@ function cartChange(idx, delta) {
     renderCartModal();
     return;
   }
-  const qtyEl = document.getElementById("cqty-" + idx);
+  const qtyEl = document.getElementById('cqty-' + idx);
   if (qtyEl) qtyEl.textContent = cart[idx].qty;
   updateCartUI();
-  const total = calcTotal();
-  const totalEl = document.getElementById("cartTotal");
-  if (totalEl) totalEl.textContent = total.toFixed(2) + " €";
+  const totalEl = document.getElementById('cartTotal');
+  if (totalEl) totalEl.textContent = calcTotal().toFixed(2) + ' €';
 }
 
-// ── PAYMENT ───────────────────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   PAYMENT MODAL
+   ───────────────────────────────────────────────────
+   BACKEND INTEGRATION:
+   • On "Confirm", POST to /api/order with:
+       { tableNumber, items: [{id, nameLv, qty, price}], total, email, marketingConsent }
+   • Kitchen receives Latvian item names (nameLv) only.
+   • Stripe Checkout / Payment Intent URL injected by backend into pay buttons.
+═══════════════════════════════════════════════════════ */
 function openPayment() {
   modalMode = 'payment';
-  const body = document.getElementById("modalBody");
+  const body  = document.getElementById('modalBody');
   const total = calcTotal();
 
   body.innerHTML = `
-    <div class="modal-title">Apmaksa</div>
-    <div class="modal-subtitle">Kopā: ${total.toFixed(2)} €</div>
+    <div class="modal-title">${t('paymentTitle')}</div>
+    <div class="modal-subtitle">${t('total')}: ${total.toFixed(2)} €</div>
+
     <div class="pay-options">
-      <button class="pay-btn apple" onclick="successOrder()">
-        <span class="pay-icon"> Pay</span>
-        <span>Apple Pay</span>
+      <!-- BACKEND: replace onclick with Stripe Apple Pay handler -->
+      <button class="pay-btn apple" onclick="submitOrder('apple_pay')">
+        <span class="pay-icon">🍎</span>
+        <span>${t('applePay')}</span>
       </button>
-      <button class="pay-btn google" onclick="successOrder()">
-        <span class="pay-icon">G Pay</span>
-        <span>Google Pay</span>
+      <!-- BACKEND: replace onclick with Stripe Google Pay handler -->
+      <button class="pay-btn google" onclick="submitOrder('google_pay')">
+        <span class="pay-icon">G</span>
+        <span>${t('googlePay')}</span>
       </button>
-      <button class="pay-btn" onclick="successOrder()">
+      <!-- BACKEND: replace onclick with Stripe Card handler -->
+      <button class="pay-btn" onclick="submitOrder('card')" style="grid-column:span 2">
         <span class="pay-icon">💳</span>
-        <span>Karte</span>
-      </button>
-      <button class="pay-btn" onclick="showCash()">
-        <span class="pay-icon">💵</span>
-        <span>Skaidrā</span>
+        <span>${t('card')}</span>
       </button>
     </div>
+
     <div class="divider"></div>
-    <input class="input-field" placeholder="E-pasts (kvīts)">
-    <input class="input-field" placeholder="Tālrunis">
-    <button class="btn-primary" onclick="successOrder()">
-      <span>Apstiprināt</span>
+
+    <input class="input-field" id="emailField" type="email" placeholder="${t('emailPlaceholder')}">
+
+    <div class="consent-block">
+      <div class="consent-row">
+        <!-- BACKEND: email_consent=true is required to send invoice -->
+        <input type="checkbox" id="consentEmail" required>
+        <label class="consent-label" for="consentEmail">
+          ${t('consentEmail')} <span class="consent-required">${t('required')}</span>
+        </label>
+      </div>
+      <div class="consent-row">
+        <!-- BACKEND: marketing_consent stored in customer profile -->
+        <input type="checkbox" id="consentMarketing">
+        <label class="consent-label" for="consentMarketing">
+          ${t('consentMarketing')}
+        </label>
+      </div>
+    </div>
+
+    <button class="btn-primary" id="confirmBtn" onclick="submitOrder('confirm')">
+      <span>${t('confirmOrder')}</span>
       <span>${total.toFixed(2)} €</span>
     </button>
-    <button class="btn-secondary" onclick="openCartModal()">← Atpakaļ</button>
+    <button class="btn-secondary" onclick="openCartModal()">${t('back')}</button>
   `;
 }
 
-function showCash() {
-  modalMode = 'cash';
-  const body = document.getElementById("modalBody");
-  const orderData = encodeURIComponent(JSON.stringify({ items: cart.map(c => ({ n: c.item.name, q: c.qty })), total: calcTotal() }));
+/* ═══════════════════════════════════════════════════════
+   ORDER SUBMISSION
+   ───────────────────────────────────────────────────
+   BACKEND: Replace this function body with actual API call.
+   Build the order payload as shown below and POST to /api/order.
+═══════════════════════════════════════════════════════ */
+function submitOrder(method) {
+  const emailField = document.getElementById('emailField');
+  const consentEmail = document.getElementById('consentEmail');
 
-  body.innerHTML = `
-    <div class="modal-title" style="text-align:center">Maksājiet kasē</div>
-    <div class="qr-container">
-      <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=order:${Date.now()}&bgcolor=FFFFFF&color=1C1C1E&qzone=2" alt="QR kods">
-      <div class="qr-label">Parādiet šo QR kodu kasierim</div>
-    </div>
-    <button class="btn-primary" onclick="successOrder()">
-      <span>Apstiprināt pasūtījumu</span>
-      <span>${calcTotal().toFixed(2)} €</span>
-    </button>
-    <button class="btn-secondary" onclick="openPayment()">← Atpakaļ</button>
-  `;
+  if (!consentEmail?.checked) {
+    consentEmail?.parentElement?.parentElement?.classList?.add('shake');
+    return;
+  }
+
+  /* ── ORDER PAYLOAD (always Latvian item names for kitchen) ── */
+  const orderPayload = {
+    tableNumber: TABLE_NUMBER,
+    paymentMethod: method,
+    email: emailField?.value || '',
+    emailConsent: consentEmail?.checked || false,
+    marketingConsent: document.getElementById('consentMarketing')?.checked || false,
+    /* Kitchen-facing: always Latvian */
+    items: cart.map(c => ({
+      id:     c.item.id,
+      nameLv: c.item.nameLv,   // ← sent to kitchen
+      qty:    c.qty,
+      price:  c.item.price
+    })),
+    total: calcTotal(),
+    currency: 'EUR',
+    timestamp: new Date().toISOString()
+  };
+
+  console.log('[Grill In] Order payload:', orderPayload);
+  /*
+    BACKEND TODO:
+    const res = await fetch('/api/order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(orderPayload)
+    });
+    const data = await res.json();
+    if (data.stripeUrl) window.location.href = data.stripeUrl;
+    else showSuccess();
+  */
+
+  showSuccess();
 }
 
-function successOrder() {
-  const body = document.getElementById("modalBody");
+function showSuccess() {
+  const body = document.getElementById('modalBody');
   body.innerHTML = `
     <div class="success-icon">✓</div>
-    <div class="success-title">Pasūtījums pieņemts!</div>
-    <div class="success-sub">Jūsu ēdiens tiek gatavots. Paldies!</div>
-    <button class="btn-primary" onclick="resetOrder()" style="justify-content:center">Jauns pasūtījums</button>
+    <div class="success-title">${t('successTitle')}</div>
+    <div class="success-sub">${t('successSub')}</div>
+    <div class="success-table">${t('successTable')} <strong>#${TABLE_NUMBER}</strong></div>
+    <button class="btn-primary" onclick="resetOrder()" style="justify-content:center;margin-top:8px">${t('newOrder')}</button>
   `;
 }
 
@@ -1056,65 +1519,125 @@ function resetOrder() {
   closeModal();
 }
 
-// ── MODAL HELPERS ─────────────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   PRIVACY MODAL
+═══════════════════════════════════════════════════════ */
+function openPrivacyModal() {
+  modalMode = 'privacy';
+  const body = document.getElementById('modalBody');
+  body.innerHTML = `
+    <div class="modal-title">${t('privacyTitle')}</div>
+    <div class="privacy-content">
+      <h3>1. Pārzinis / Контролер / Controller</h3>
+      <p>Grill In. Kontaktinformācija: info@grillin.lv</p>
+      <h3>2. Datu apstrāde pasūtījumam</h3>
+      <p>Lai apstrādātu jūsu pasūtījumu, mēs apkopojam jūsu e-pasta adresi rēķina nosūtīšanai un pasūtījuma informāciju ēdiena sagatavošanai virtuvē. Šī apstrāde ir nepieciešama pakalpojuma sniegšanai (VDAR 6. panta 1. punkta b) apakšpunkts).</p>
+      <h3>3. Mārketinga komunikācija</h3>
+      <p>Ar jūsu skaidru piekrišanu (VDAR 6. panta 1. punkta a) apakšpunkts) mēs varam sūtīt jums jaunumus un piedāvājumus. Piekrišanu var atsaukt jebkurā laikā.</p>
+      <h3>4. Maksājumu apstrāde</h3>
+      <p>Maksājumus apstrādā Stripe, Inc. Kartes dati netiek glabāti mūsu serveros. Stripe privātuma politika: stripe.com/privacy.</p>
+      <h3>5. Sīkdatnes</h3>
+      <p>Mēs izmantojam tikai tehniski nepieciešamās sīkdatnes (valodas izvēle, piekrišana). Ar jūsu piekrišanu — arī analītikas sīkdatnes.</p>
+      <h3>6. Jūsu tiesības</h3>
+      <p>Jums ir tiesības piekļūt saviem datiem, tos labot, dzēst un ierobežot apstrādi. Sūtiet pieprasījumus uz info@grillin.lv.</p>
+    </div>
+    <button class="btn-secondary" onclick="closeModal()" style="margin-top:16px">${t('close')}</button>
+  `;
+  openModal();
+}
+
+/* ═══════════════════════════════════════════════════════
+   MODAL HELPERS
+═══════════════════════════════════════════════════════ */
 function openModal() {
-  const overlay = document.getElementById("modalOverlay");
-  const sheet = document.getElementById("modalSheet");
-  overlay.style.display = "block";
+  const overlay = document.getElementById('modalOverlay');
+  const sheet   = document.getElementById('modalSheet');
+  overlay.style.display = 'block';
   requestAnimationFrame(() => {
-    overlay.classList.add("open");
-    sheet.classList.add("open");
+    overlay.classList.add('open');
+    sheet.classList.add('open');
   });
-  document.body.style.overflow = "hidden";
+  document.body.style.overflow = 'hidden';
 }
 
 function closeModal() {
-  const overlay = document.getElementById("modalOverlay");
-  const sheet = document.getElementById("modalSheet");
-  overlay.classList.remove("open");
-  sheet.classList.remove("open");
+  const overlay = document.getElementById('modalOverlay');
+  const sheet   = document.getElementById('modalSheet');
+  overlay.classList.remove('open');
+  sheet.classList.remove('open');
   setTimeout(() => {
-    overlay.style.display = "none";
-    document.body.style.overflow = "";
-  }, 380);
+    overlay.style.display = 'none';
+    document.body.style.overflow = '';
+  }, 400);
 }
 
 function handleOverlayClick(e) {
-  if (e.target === document.getElementById("modalOverlay")) closeModal();
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
 }
 
-// ── CART UI ───────────────────────────────────────────────────────────────────
-function calcTotal() {
-  return cart.reduce((s, c) => s + c.item.price * c.qty, 0);
-}
-
-function calcCount() {
-  return cart.reduce((s, c) => s + c.qty, 0);
-}
+/* ═══════════════════════════════════════════════════════
+   CART UI
+═══════════════════════════════════════════════════════ */
+function calcTotal()  { return cart.reduce((s, c) => s + c.item.price * c.qty, 0); }
+function calcCount()  { return cart.reduce((s, c) => s + c.qty, 0); }
 
 function updateCartUI() {
-  const count = calcCount();
-  const total = calcTotal();
-  const bar = document.getElementById("cartBar");
-  const headerCart = document.getElementById("headerCart");
+  const count  = calcCount();
+  const total  = calcTotal();
+  const bar    = document.getElementById('cartBar');
+  const hCart  = document.getElementById('headerCart');
 
-  document.getElementById("cartBarCount").textContent = count;
-  document.getElementById("cartBarTotal").textContent = total.toFixed(2) + " €";
-  document.getElementById("headerCartCount").textContent = count;
+  document.getElementById('cartBarCount').textContent   = count;
+  document.getElementById('cartBarTotal').textContent   = total.toFixed(2) + ' €';
+  document.getElementById('headerCartCount').textContent = count;
 
   if (count > 0) {
-    bar.classList.add("visible");
-    headerCart.style.display = "flex";
-    bar.classList.remove("bounce");
+    bar.classList.add('visible');
+    hCart.style.display = 'flex';
+    bar.classList.remove('bounce');
     void bar.offsetWidth;
-    bar.classList.add("bounce");
+    bar.classList.add('bounce');
   } else {
-    bar.classList.remove("visible");
-    headerCart.style.display = "none";
+    bar.classList.remove('visible');
+    hCart.style.display = 'none';
   }
 }
 
-render();
+/* ═══════════════════════════════════════════════════════
+   COOKIE CONSENT
+═══════════════════════════════════════════════════════ */
+function acceptAll() {
+  localStorage.setItem('consent', JSON.stringify({ necessary: true, marketing: true }));
+  hideCookieBanner();
+}
+
+function acceptSelected() {
+  const marketing = document.getElementById('ckMarketing')?.checked || false;
+  localStorage.setItem('consent', JSON.stringify({ necessary: true, marketing }));
+  hideCookieBanner();
+}
+
+function hideCookieBanner() {
+  document.getElementById('cookieBanner').classList.add('hidden');
+}
+
+function checkConsent() {
+  const stored = localStorage.getItem('consent');
+  if (stored) hideCookieBanner();
+}
+
+/* ═══════════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  checkConsent();
+  applyLangUI();
+  // Set initial active lang button
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('lang-' + lang);
+  if (btn) btn.classList.add('active');
+  render();
+});
 </script>
 
 </body>
